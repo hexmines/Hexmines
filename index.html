@@ -1,6 +1,7 @@
 <head>
 	<title>HEXmines</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta charset="UTF-8">
 <style>
 .slidecontainer {
   width: 100%;
@@ -48,6 +49,19 @@
      padding: 20px;
 }
 
+text {
+	cursor: default;
+	-moz-user-select: -moz-none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+	/*
+	 Introduced in IE 10.
+	 See http://ie.microsoft.com/testdrive/HTML5/msUserSelect/
+	*/
+	-ms-user-select: none;
+	user-select: none;
+}
+
 </style>
 </head>
 
@@ -88,7 +102,6 @@ function mult(a,k){
 	return c;					
 }
 
-
 function restart(){
 	stop();
 	document.getElementById('alive').value='1';
@@ -117,7 +130,7 @@ function restart(){
 	  		hex=addv((hex00_p),mult(j_vector,j));
 	  		hex=addv(hex,mult(i_vector,i));
 	  		points=hex.toString();
-	  		text=text+'<g id="g_'+[i,j].toString()+'" onclick="game(['+[i,j].toString()+'])"> <polygon class="hex" clicked=0 mined=-1 id="'+[i,j].toString()+'" points="'+ points +'" style="fill:#aaaaaa;stroke:purple;stroke-width:'+(5/n).toString()+'" /> <text x="'+(hex[4]*0.3+hex[10]*0.7)+'" y="'+(hex[5]*0.25+hex[11]*0.75)+'" type="hidden" id="t_'+[i,j].toString()+'" class="heavy"></text> </g>';
+	  		text=text+'<g id="g_'+[i,j].toString()+'" onmousedown="game(['+[i,j].toString()+'])"> <polygon class="hex" clicked=0 mined=-1 flagged=0 id="'+[i,j].toString()+'" points="'+ points +'" style="fill:#aaaaaa;stroke:purple;stroke-width:'+(5/n).toString()+'" /> <text x="'+(hex[4]*0.3+hex[10]*0.7)+'" y="'+(hex[5]*0.25+hex[11]*0.75)+'" type="hidden" id="t_'+[i,j].toString()+'" class="heavy"></text> </g>';
 	  		// text = text+ '<polygon class="hex" clicked=0 mined=-1 id="'+[i,j].toString()+' "points="'+ points +'" style="fill:#aaaaaa;stroke:purple;stroke-width:1" onclick="game(['+[i,j].toString()+'])" />';
 	  		
 	  		// text = text+'<text x="'+(parseInt(hex[0])+parseInt(hex[6]))/2+'" y="'+(hex[1]+hex[7])/2+'" id="t'+[i,j].toString()+' class="heavy" onclick="game(['+[i,j].toString()+'])">9</text>';
@@ -127,6 +140,11 @@ function restart(){
 	}
 	text+='</svg>'
 	document.getElementById("demo").innerHTML = text;
+	for (var i = 0; i < 2*n-1 ; i++) {
+		for (var j = Math.max(0,i-(n-1));j < Math.min(n+i,2*n-1); j++) {
+			document.getElementById('g_'+[i,j].toString()).addEventListener('contextmenu', e => e.preventDefault());
+	  	}
+	}
 	//document.getElementById("nbombs").value=n*(n-1)*3/5;
 	//document.getElementById("nbombs").setAttribute('max',n*(n-1)*3);
 }
@@ -147,9 +165,11 @@ function game(pos){
 		return 0;
 	}
 	else{
+		var flag = event.button != 0;
 		var n=parseInt(document.getElementById("n").value);
 		//console.log(pos);
 		let cell = document.getElementById(pos.toString());
+		// Set up bombs
 		if (parseInt(cell.getAttribute('mined'))==-1){
 			var start_config=[];
 			var nbombs=document.getElementById("nbombs").value;
@@ -173,16 +193,30 @@ function game(pos){
 			document.getElementById('to_go').value=(n*(n-1)*3+1-nbombs).toString();
 			start();
 		}
+		// Flag/unflag cell
+		if (flag == true && parseInt(cell.getAttribute('clicked'))==0){
+			if (parseInt(cell.getAttribute('flagged'))==0) {
+				document.getElementById('t_'+pos.toString()).innerHTML="🚩";
+				cell.setAttribute('flagged',1);
+			} else {
+				document.getElementById('t_'+pos.toString()).innerHTML="";
+				cell.setAttribute('flagged',0);
+			}
+			return 0;
+		}
+		// There is a bomb
 		if (parseInt(cell.getAttribute('mined'))==1){
 			for (var i0=0;i0<document.getElementsByClassName('hex').length; i0++){
 				if (document.getElementsByClassName('hex')[i0].getAttribute('mined')==1){
 					document.getElementsByClassName('hex')[i0].style.fill=colors['7'];
+					document.getElementById('t_'+document.getElementsByClassName('hex')[i0].id).innerHTML="💣";
 				}
 			}
 			document.getElementById('alive').value='0';
 			document.getElementById('message').innerHTML='Sorry, you died. Try again.';
 			stop();
 		}
+		// There is nothing
 		if ((parseInt(cell.getAttribute('mined'))==0)&&(parseInt(cell.getAttribute('clicked'))==0)){
 			cell.setAttribute('clicked',1);
 			document.getElementById('to_go').value=document.getElementById('to_go').value-1;
@@ -204,12 +238,14 @@ function game(pos){
 					candidate=addv(pos,list_neighs[i1]);
 					if (valid(candidate,n)){
 						if (document.getElementById(candidate.toString()).getAttribute('clicked')==0){
-							document.getElementById('g_'+candidate.toString()).onclick();
+							document.getElementById('g_'+candidate.toString()).onmousedown();
 						}
 					}
 				}
+				document.getElementById('t_'+pos.toString()).innerHTML="";
 			}
 		}
+		// Game completed
 		if (parseInt(document.getElementById('to_go').value)<1){
 			document.getElementById('message').innerHTML='CONGRATULATIONS, YOU WON!!';
 			document.getElementById('alive').value='0';
