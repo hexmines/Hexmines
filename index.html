@@ -100,7 +100,7 @@ function mult(a,k){
 	return c;					
 }
 
-var touchStart = false;
+var shouldCheck = false;
 
 function restart(){
 	stop();
@@ -130,7 +130,7 @@ function restart(){
 	  		hex=addv((hex00_p),mult(j_vector,j));
 	  		hex=addv(hex,mult(i_vector,i));
 	  		points=hex.toString();
-	  		text=text+'<g id="g_'+[i,j].toString()+'" onmousedown="game(['+[i,j].toString()+'])" ontouchstart="touchStart=true" onselectstart="game(['+[i,j].toString()+'])">'
+	  		text=text+'<g id="g_'+[i,j].toString()+'" onmousedown="game(['+[i,j].toString()+'])" ontouchstart="shouldCheck=true" onselectstart="game(['+[i,j].toString()+'])">'
 				+'<polygon class="hex" clicked=0 mined=-1 flagged=0 id="'+[i,j].toString()+'" points="'+ points +'" style="fill:#aaaaaa;stroke:purple;stroke-width:'+(5/n).toString()+'"/>'
 				+'<text x="'+(hex[4]*0.3+hex[10]*0.7)+'" y="'+(hex[5]*0.25+hex[11]*0.75)+'" type="hidden" id="t_'+[i,j].toString()+'" class="heavy"></text>'
 				+'</g>';
@@ -164,11 +164,11 @@ function valid(pos,n){
 }
 
 function game(pos){
-	if (document.getElementById('alive').value=='0' || !touchStart){
+	if (document.getElementById('alive').value=='0' || !shouldCheck){
 		return 0;
 	}
 	else{
-		touchStart=false;
+		shouldCheck=false;
 		event.preventDefault();
 		var flag = event.button != 0 || event.type == "selectstart";
 		var n=parseInt(document.getElementById("n").value);
@@ -243,6 +243,7 @@ function game(pos){
 					candidate=addv(pos,list_neighs[i1]);
 					if (valid(candidate,n)){
 						if (document.getElementById(candidate.toString()).getAttribute('clicked')==0){
+							shouldCheck=true;
 							document.getElementById('g_'+candidate.toString()).onmousedown();
 						}
 					}
