@@ -60,11 +60,16 @@ text {
 	pointer-events: none;
 }
 
+#flag {
+	position: absolute;
+	text-align: center;
+}
+
 </style>
 </head>
 
 
-<body>
+<body onmousemove='document.getElementById("flag").style.left=event.pageX; document.getElementById("flag").style.top=event.pageY-20'>
 
 
 <script>
@@ -141,7 +146,7 @@ function restart(){
 	  		// //console.log(i,j);
 	  	}
 	}
-	text+='</svg>'
+	text+='</svg>';
 	document.getElementById("demo").innerHTML = text;
 	for (var i = 0; i < 2*n-1 ; i++) {
 		for (var j = Math.max(0,i-(n-1));j < Math.min(n+i,2*n-1); j++) {
@@ -201,11 +206,35 @@ function game(pos){
 		// Flag/unflag cell
 		if (flag == true && parseInt(cell.getAttribute('clicked'))==0){
 			if (parseInt(cell.getAttribute('flagged'))==0) {
-				document.getElementById('t_'+pos.toString()).innerHTML="🚩";
-				cell.setAttribute('flagged',1);
+				document.getElementById("flag").style.display='block';
+				document.getElementById("flag").animate([{
+					opacity: 0,
+					transform: 'scale(5) translate(0%, -200%)',
+				}, {
+					opacity: 1,
+					transform: 'scale(1) translate(0%, 0%)'
+				}], {
+					duration: 150,
+					easing: 'linear',
+				}).onfinish=()=>{
+					document.getElementById('t_'+pos.toString()).innerHTML="🚩";
+					cell.setAttribute('flagged',1);
+					document.getElementById("flag").style.display='none';
+				};
 			} else {
 				document.getElementById('t_'+pos.toString()).innerHTML="";
 				cell.setAttribute('flagged',0);
+				document.getElementById("flag").style.display='block';
+				document.getElementById("flag").animate([{
+					opacity: 1,
+					transform: 'scale(1) translate(0%, 0%)',
+				}, {
+					opacity: 0,
+					transform: 'scale(5) translate(0%, -200%)'
+				}], {
+					duration: 150,
+					easing: 'linear',
+				}).onfinish=()=>document.getElementById("flag").style.display='none';
 			}
 			return 0;
 		}
@@ -274,7 +303,16 @@ document.getElementsByClassName("hex").onclick = function() {game()};
     		</style>
   		<text x="0" y="30" fill="black" class='big'>HexMINES.visaub.com</text>
   	</svg><br>
-  	<div class="inner-div" id="demo"></div>
+  	<div class="inner-div" id="demo"></div><br>
+	<svg id="flag" width="20" height="20" style="display: none">
+		<style>
+			.cursor {
+				text-anchor: middle;
+				alignment-baseline: middle;
+			}
+		</style>
+		<text x="50%" y="50%" type="hidden" class="heavy cursor">🚩</text>
+	</svg>
 </div>
 
 
