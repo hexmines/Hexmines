@@ -54,12 +54,10 @@ text {
 	-moz-user-select: -moz-none;
 	-khtml-user-select: none;
 	-webkit-user-select: none;
-	/*
-	 Introduced in IE 10.
-	 See http://ie.microsoft.com/testdrive/HTML5/msUserSelect/
-	*/
 	-ms-user-select: none;
 	user-select: none;
+	-webkit-touch-callout: none;
+	pointer-events: none;
 }
 
 </style>
@@ -102,6 +100,8 @@ function mult(a,k){
 	return c;					
 }
 
+var touchStart = false;
+
 function restart(){
 	stop();
 	document.getElementById('alive').value='1';
@@ -130,7 +130,10 @@ function restart(){
 	  		hex=addv((hex00_p),mult(j_vector,j));
 	  		hex=addv(hex,mult(i_vector,i));
 	  		points=hex.toString();
-	  		text=text+'<g id="g_'+[i,j].toString()+'" onmousedown="game(['+[i,j].toString()+'])"> <polygon class="hex" clicked=0 mined=-1 flagged=0 id="'+[i,j].toString()+'" points="'+ points +'" style="fill:#aaaaaa;stroke:purple;stroke-width:'+(5/n).toString()+'" /> <text x="'+(hex[4]*0.3+hex[10]*0.7)+'" y="'+(hex[5]*0.25+hex[11]*0.75)+'" type="hidden" id="t_'+[i,j].toString()+'" class="heavy"></text> </g>';
+	  		text=text+'<g id="g_'+[i,j].toString()+'" onmousedown="game(['+[i,j].toString()+'])" ontouchstart="touchStart=true" onselectstart="game(['+[i,j].toString()+'])">'
+				+'<polygon class="hex" clicked=0 mined=-1 flagged=0 id="'+[i,j].toString()+'" points="'+ points +'" style="fill:#aaaaaa;stroke:purple;stroke-width:'+(5/n).toString()+'"/>'
+				+'<text x="'+(hex[4]*0.3+hex[10]*0.7)+'" y="'+(hex[5]*0.25+hex[11]*0.75)+'" type="hidden" id="t_'+[i,j].toString()+'" class="heavy"></text>'
+				+'</g>';
 	  		// text = text+ '<polygon class="hex" clicked=0 mined=-1 id="'+[i,j].toString()+' "points="'+ points +'" style="fill:#aaaaaa;stroke:purple;stroke-width:1" onclick="game(['+[i,j].toString()+'])" />';
 	  		
 	  		// text = text+'<text x="'+(parseInt(hex[0])+parseInt(hex[6]))/2+'" y="'+(hex[1]+hex[7])/2+'" id="t'+[i,j].toString()+' class="heavy" onclick="game(['+[i,j].toString()+'])">9</text>';
@@ -161,11 +164,13 @@ function valid(pos,n){
 }
 
 function game(pos){
-	if (document.getElementById('alive').value=='0'){
+	if (document.getElementById('alive').value=='0' || !touchStart){
 		return 0;
 	}
 	else{
-		var flag = event.button != 0;
+		touchStart=false;
+		event.preventDefault();
+		var flag = event.button != 0 || event.type == "selectstart";
 		var n=parseInt(document.getElementById("n").value);
 		//console.log(pos);
 		let cell = document.getElementById(pos.toString());
