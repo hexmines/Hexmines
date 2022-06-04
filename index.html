@@ -61,15 +61,17 @@ text {
 }
 
 #flag {
+	cursor: default;
 	position: absolute;
 	text-align: center;
+	pointer-events: none;
 }
 
 </style>
 </head>
 
 
-<body onmousemove='document.getElementById("flag").style.left=event.pageX; document.getElementById("flag").style.top=event.pageY-20'>
+<body>
 
 
 <script>
@@ -205,6 +207,9 @@ function game(pos){
 		}
 		// Flag/unflag cell
 		if (flag == true && parseInt(cell.getAttribute('clicked'))==0){
+			var rect=event.target.getBoundingClientRect();
+			document.getElementById("flag").style.left=rect.left+rect.width/2-5;
+			document.getElementById("flag").style.top=rect.top+rect.height/2-10;
 			if (parseInt(cell.getAttribute('flagged'))==0) {
 				cell.setAttribute('flagged',1);
 				document.getElementById("flag").style.display='block';
