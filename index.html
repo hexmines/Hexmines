@@ -206,6 +206,7 @@ function game(pos){
 		// Flag/unflag cell
 		if (flag == true && parseInt(cell.getAttribute('clicked'))==0){
 			if (parseInt(cell.getAttribute('flagged'))==0) {
+				cell.setAttribute('flagged',1);
 				document.getElementById("flag").style.display='block';
 				document.getElementById("flag").animate([{
 					opacity: 0,
@@ -218,13 +219,12 @@ function game(pos){
 					easing: 'linear',
 				}).onfinish=()=>{
 					document.getElementById('t_'+pos.toString()).innerHTML="🚩";
-					cell.setAttribute('flagged',1);
 					document.getElementById("flag").style.display='none';
 				};
 			} else {
-				document.getElementById('t_'+pos.toString()).innerHTML="";
 				cell.setAttribute('flagged',0);
 				document.getElementById("flag").style.display='block';
+				document.getElementById('t_'+pos.toString()).innerHTML="";
 				document.getElementById("flag").animate([{
 					opacity: 1,
 					transform: 'scale(1) translate(0%, 0%)',
@@ -273,7 +273,7 @@ function game(pos){
 					if (valid(candidate,n)){
 						if (document.getElementById(candidate.toString()).getAttribute('clicked')==0){
 							shouldCheck=true;
-							document.getElementById('g_'+candidate.toString()).onmousedown();
+							game(candidate);
 						}
 					}
 				}
