@@ -111,7 +111,7 @@ var shouldCheck = false;
 
 function restart(){
 	stop();
-	document.getElementById('alive').value='1';
+	document.getElementById('alive').value='3';
 	document.getElementById('message').innerHTML='';
 	document.getElementById("timer").innerHTML='0';
 	var n = parseInt(document.getElementById("n").value);
@@ -245,15 +245,23 @@ function game(pos){
 		}
 		// There is a bomb
 		if (parseInt(cell.getAttribute('mined'))==1){
-			for (var i0=0;i0<document.getElementsByClassName('hex').length; i0++){
-				if (document.getElementsByClassName('hex')[i0].getAttribute('mined')==1){
-					document.getElementsByClassName('hex')[i0].style.fill=colors['7'];
-					document.getElementById('t_'+document.getElementsByClassName('hex')[i0].id).innerHTML="💣";
+			cell.style.fill=colors['7'];
+			document.getElementById('t_'+pos).innerHTML="💣";
+			document.getElementById('alive').value=(parseInt(document.getElementById('alive').value)-1).toString();
+			if (document.getElementById('alive').value=='0'){
+				var skip=0;
+				for (var i0=0;i0<document.getElementsByClassName('hex').length-1; i0++){
+					if (document.getElementsByClassName('hex')[i0].id==pos){
+						skip=1;
+					}
+					if (document.getElementsByClassName('hex')[i0+skip].getAttribute('mined')==1){
+						document.getElementsByClassName('hex')[i0+skip].style.fill=colors['7'];
+						document.getElementById('t_'+document.getElementsByClassName('hex')[i0+skip].id).innerHTML="💣";
+					}
 				}
+				document.getElementById('message').innerHTML='Sorry, you died. Try again.';
+				stop();
 			}
-			document.getElementById('alive').value='0';
-			document.getElementById('message').innerHTML='Sorry, you died. Try again.';
-			stop();
 		}
 		// There is nothing
 		if ((parseInt(cell.getAttribute('mined'))==0)&&(parseInt(cell.getAttribute('clicked'))==0)){
@@ -337,7 +345,7 @@ document.getElementsByClassName("hex").onclick = function() {game()};
 </div>
 
 
-<input type="hidden" id="alive" value='1'>
+<input type="hidden" id="alive" value='3'>
 <input type="hidden" id="to_go" >
 
 <script>
