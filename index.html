@@ -111,7 +111,7 @@ var shouldCheck = false;
 
 function restart(){
 	stop();
-	document.getElementById('alive').value='3';
+	document.getElementById('lives').value=3;
 	document.getElementById('coins').value='5';
 	document.getElementById('message').innerHTML='';
 	document.getElementById("timer").innerHTML='0';
@@ -172,7 +172,7 @@ function valid(pos,n){
 }
 
 function game(pos){
-	if (document.getElementById('alive').value=='0' || !shouldCheck){
+	if (document.getElementById('lives').value==0 || !shouldCheck){
 		return 0;
 	}
 	else{
@@ -271,8 +271,8 @@ function game(pos){
 		if (parseInt(cell.getAttribute('mined'))==1){
 			cell.style.fill=colors['7'];
 			document.getElementById('t_'+pos).innerHTML="💣";
-			document.getElementById('alive').value=(parseInt(document.getElementById('alive').value)-1).toString();
-			if (document.getElementById('alive').value=='0'){
+			document.getElementById('lives').value=document.getElementById('lives').value-1;
+			if (document.getElementById('lives').value==0){
 				var skip=0;
 				for (var i0=0;i0<document.getElementsByClassName('hex').length-1; i0++){
 					if (document.getElementsByClassName('hex')[i0].id==pos){
@@ -324,7 +324,7 @@ function game(pos){
 		// Game completed
 		if (parseInt(document.getElementById('to_go').value)<1){
 			document.getElementById('message').innerHTML='CONGRATULATIONS, YOU WON!!';
-			document.getElementById('alive').value='0';
+			document.getElementById('lives').value=0;
 			stop();
 		}
 	}
@@ -336,6 +336,10 @@ function game(pos){
 document.getElementsByClassName("hex").onclick = function() {game()};
 
 </script>
+
+<div>
+	<p>Lives: <input type="number" id="lives" value=3></p>
+</div>
 
 <div class="outer-div">
 	<svg height="40" width="200">
@@ -373,7 +377,6 @@ document.getElementsByClassName("hex").onclick = function() {game()};
 </div>
 
 
-<input type="hidden" id="alive" value='3'>
 <input type="hidden" id="to_go" >
 <input type="hidden" id="coins" value='5'>
 
