@@ -3,6 +3,20 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta charset="UTF-8">
 <style>
+@font-face {
+	font-family: "Atari Classic";
+	src: url("font.eot");
+	src: url("font.eot?#iefix") format("embedded-opentype"),
+		 url("font.woff2") format("woff2"),
+		 url("font.woff") format("woff"),
+		 url("font.ttf") format("truetype"),
+		 url('webfont.svg#Atari Classic') format('svg');
+}
+
+html {
+	font-family: Atari Classic;
+}
+
 .slidecontainer {
   width: 100%;
 }
@@ -389,7 +403,7 @@ document.getElementsByClassName("hex").onclick = function() {game()};
 	<p id='message'></p> 
 	<button onclick="restart()">Restart</button>
 	<p><span id="live1">❤️</span> <span id="live2">❤️</span> <span id="live3">❤️</span></p>
-	<p>Coins: <input type="number" id="coins" value=0>/<input type="number" id="to_collect" value=5></p>
+	<p>💰 x <input type="number" id="coins" value=0>/<input type="number" id="to_collect" value=5></p>
 	<p>Size of puzzle: <input type="number" id="n" min=2 value=6></p>
 	<p>Number of mines: <span id="demo2"></span></p>
 </div>
@@ -443,6 +457,4 @@ var stop = function() {
 }
 
 </script>
-<h5>Done by: Victor Sainz Ubide 2019. <a href='https://visaub.com'>@visaub</a></h5>
-<h5><a href='https://www.github.com/visaub/hexmines'>Repository with the code of this game.</a></h5>
 </body>
