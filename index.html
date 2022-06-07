@@ -17,46 +17,12 @@ html {
 	font-family: Atari Classic;
 }
 
-.slidecontainer {
-  width: 100%;
-}
-
-.slider {
-  -webkit-appearance: none;
-  width: 80%;
-  height: 25px;
-  background: #d3d3d3;
-  outline: none;
-  opacity: 0.7;
-  -webkit-transition: .2s;
-  transition: opacity .2s;
-}
-
-.slider:hover {
-  opacity: 1;
-}
-
-.slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 25px;
-  height: 25px;
-  background: #4CAF50;
-  cursor: pointer;
-}
-
-.slider::-moz-range-thumb {
-  width: 25px;
-  height: 25px;
-  background: #4CAF50;
-  cursor: pointer;
-}
-
 .outer-div
 {
      padding: 1px;
      text-align: center;
 }
+
 .inner-div
 {
      display: inline-block;
@@ -129,7 +95,7 @@ function restart(){
 	document.getElementById('live1').style.display="inline";
 	document.getElementById('live2').style.display="inline";
 	document.getElementById('live3').style.display="inline";
-	document.getElementById('to_collect').value=5;
+	document.getElementById('to_collect').innerHTML=5;
 	document.getElementById('message').innerHTML='';
 	document.getElementById("timer").innerHTML='0';
 	var n = parseInt(document.getElementById("n").value);
@@ -241,7 +207,7 @@ function game(pos){
 			}
 			//console.log(loot);
 			Shuffle(loot);
-			for (var i3=0;i3<parseInt(document.getElementById('to_collect').value); i3++){
+			for (var i3=0;i3<parseInt(document.getElementById('to_collect').innerHTML); i3++){
 				document.getElementById(loot[i3].toString()).setAttribute('coin',1);
 			}
 			start();
@@ -287,7 +253,7 @@ function game(pos){
 		}
 		// Colect coin
 		if (parseInt(cell.getAttribute('clicked'))==1 && parseInt(cell.getAttribute('coin'))==1){
-			document.getElementById('coins').value=parseInt(document.getElementById('coins').value)+1;
+			document.getElementById('coins').innerHTML=parseInt(document.getElementById('coins').innerHTML)+1;
 			var rect=event.target.getBoundingClientRect();
 			document.getElementById("atext").innerHTML="💰";
 			document.getElementById("animation").style.left=rect.left+window.scrollX+rect.width/2-10;
@@ -301,14 +267,14 @@ function game(pos){
 				transform: 'translate(0%, 0%)',
 			}, {
 				opacity: 1,
-				transform: 'translate(0%, -100%)',
+				transform: 'translate(0%, -125%)',
 				offset: 0.3
 			}, {
 				opacity: 0,
-				transform: 'translate(0%, -50%)'
+				transform: 'translate(0%, -100%)'
 			}], {
 				duration: 400,
-				easing: 'ease-out',
+				easing: 'linear',
 			}).onfinish=()=>document.getElementById("animation").style.display='none';
 			return 0;
 		}
@@ -403,30 +369,25 @@ document.getElementsByClassName("hex").onclick = function() {game()};
 	<p id='message'></p> 
 	<button onclick="restart()">Restart</button>
 	<p><span id="live1">❤️</span> <span id="live2">❤️</span> <span id="live3">❤️</span></p>
-	<p>💰 x <input type="number" id="coins" value=0>/<input type="number" id="to_collect" value=5></p>
-	<p>Size of puzzle: <input type="number" id="n" min=2 value=6></p>
-	<p>Number of mines: <span id="demo2"></span></p>
+	<p>💰 x <span id="coins">0</span> / <span id="to_collect">5</p>
+	<p>💣 x <span id="demo2"></span></p>
 </div>
 
-<div class="slidecontainer">
-	<input type="range" min="1" max="60" value="12" class="slider" id="nbombs">
-</div>
 <div>
-	<p>Total number of cells: <span id="nhexs">61</span></p>
 	<p>Time: <span id='timer'>0</span> seconds.</p>
 </div>
 
 <input type="hidden" id="lives" value=3>
+<input type="hidden" id="n" value=6>
+<input type="hidden" id="nbombs" value="12">
 <input type="hidden" id="to_go" >
 
 <script>
-	var slider = document.getElementById("nbombs");
 	var n = document.getElementById("n");
 	var output = document.getElementById("demo2");
-	var nhexs = document.getElementById("nhexs");
+	output.innerHTML = document.getElementById("nbombs").value
 
-	output.innerHTML = slider.value;
-
+	/*
 	slider.oninput = function() {
 		output.innerHTML = this.value;
 	}
@@ -437,6 +398,7 @@ document.getElementsByClassName("hex").onclick = function() {game()};
 		output.innerHTML = slider.value;
 		restart();
 	}
+	*/
 
 window.onload = function() {
 	restart();
