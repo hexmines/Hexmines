@@ -112,7 +112,7 @@ var shouldCheck = false;
 function restart(){
 	stop();
 	document.getElementById('lives').value=3;
-	document.getElementById('to_collect').value='5';
+	document.getElementById('to_collect').value=5;
 	document.getElementById('message').innerHTML='';
 	document.getElementById("timer").innerHTML='0';
 	var n = parseInt(document.getElementById("n").value);
@@ -296,7 +296,8 @@ function game(pos){
 			return 0;
 		}
 		// There is a bomb
-		if (parseInt(cell.getAttribute('mined'))==1){
+		if (parseInt(cell.getAttribute('mined'))==1 && parseInt(cell.getAttribute('clicked'))==0){
+			cell.setAttribute('clicked',1);
 			cell.style.fill=colors['7'];
 			document.getElementById('t_'+pos).innerHTML="💣";
 			document.getElementById('lives').value=document.getElementById('lives').value-1;
@@ -307,6 +308,7 @@ function game(pos){
 						skip=1;
 					}
 					if (document.getElementsByClassName('hex')[i0+skip].getAttribute('mined')==1){
+						document.getElementsByClassName('hex')[i0+skip].setAttribute('clicked',1);
 						document.getElementsByClassName('hex')[i0+skip].style.fill=colors['7'];
 						document.getElementById('t_'+document.getElementsByClassName('hex')[i0+skip].id).innerHTML="💣";
 					}
@@ -383,7 +385,7 @@ document.getElementsByClassName("hex").onclick = function() {game()};
 	<p id='message'></p> 
 	<button onclick="restart()">Restart</button>
 	<p>Lives: <input type="number" id="lives" value=3></p>
-	<p>Coins: <input type="number" id="coins" value=0></p>
+	<p>Coins: <input type="number" id="coins" value=0>/<input type="number" id="to_collect" value=5></p>
 	<p>Size of puzzle: <input type="number" id="n" min=2 value=6></p>
 	<p>Number of mines: <span id="demo2"></span></p>
 </div>
@@ -398,7 +400,6 @@ document.getElementsByClassName("hex").onclick = function() {game()};
 
 
 <input type="hidden" id="to_go" >
-<input type="hidden" id="to_collect" value='5'>
 
 <script>
 	var slider = document.getElementById("nbombs");
