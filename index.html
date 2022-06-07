@@ -112,6 +112,9 @@ var shouldCheck = false;
 function restart(){
 	stop();
 	document.getElementById('lives').value=3;
+	document.getElementById('live1').style.display="inline";
+	document.getElementById('live2').style.display="inline";
+	document.getElementById('live3').style.display="inline";
 	document.getElementById('to_collect').value=5;
 	document.getElementById('message').innerHTML='';
 	document.getElementById("timer").innerHTML='0';
@@ -300,6 +303,7 @@ function game(pos){
 			cell.setAttribute('clicked',1);
 			cell.style.fill=colors['7'];
 			document.getElementById('t_'+pos).innerHTML="💣";
+			document.getElementById('live'+document.getElementById('lives').value).style.display="none";
 			document.getElementById('lives').value=document.getElementById('lives').value-1;
 			if (document.getElementById('lives').value==0){
 				var skip=0;
@@ -384,7 +388,7 @@ document.getElementsByClassName("hex").onclick = function() {game()};
 <div>
 	<p id='message'></p> 
 	<button onclick="restart()">Restart</button>
-	<p>Lives: <input type="number" id="lives" value=3></p>
+	<p><span id="live1">❤️</span> <span id="live2">❤️</span> <span id="live3">❤️</span></p>
 	<p>Coins: <input type="number" id="coins" value=0>/<input type="number" id="to_collect" value=5></p>
 	<p>Size of puzzle: <input type="number" id="n" min=2 value=6></p>
 	<p>Number of mines: <span id="demo2"></span></p>
@@ -398,7 +402,7 @@ document.getElementsByClassName("hex").onclick = function() {game()};
 	<p>Time: <span id='timer'>0</span> seconds.</p>
 </div>
 
-
+<input type="hidden" id="lives" value=3>
 <input type="hidden" id="to_go" >
 
 <script>
