@@ -357,7 +357,6 @@ document.getElementsByClassName("hex").onclick = function() {game()};
 		<style>
 			.cursor {
 				text-anchor: middle;
-				alignment-baseline: middle;
 			}
 		</style>
 		<text id="atext" x="50%" y="50%" type="hidden" class="heavy cursor"></text>
@@ -371,10 +370,7 @@ document.getElementsByClassName("hex").onclick = function() {game()};
 	<p><span id="live1">❤️</span> <span id="live2">❤️</span> <span id="live3">❤️</span></p>
 	<p>💰 x <span id="coins">0</span> / <span id="to_collect">5</p>
 	<p>💣 x <span id="demo2"></span></p>
-</div>
-
-<div>
-	<p>Time: <span id='timer'>0</span> seconds.</p>
+	<p>🕑 <span id='timer'>0</span></p>
 </div>
 
 <input type="hidden" id="lives" value=3>
