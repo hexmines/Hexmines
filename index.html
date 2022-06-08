@@ -17,16 +17,16 @@ html {
 	font-family: Atari Classic;
 }
 
-.outer-div
+#outer-div
 {
-     padding: 1px;
-     text-align: center;
+    padding: 1px;
+    text-align: center;
 }
 
 .inner-div
 {
-     display: inline-block;
-     padding: 20px;
+    display: inline-block;
+    padding: 20px;
 }
 
 text {
@@ -215,9 +215,13 @@ function game(pos){
 		// Flag/unflag cell
 		if (flag == true && parseInt(cell.getAttribute('clicked'))==0){
 			var rect=event.target.getBoundingClientRect();
+			var container=document.getElementById("outer-div");
+			var ow = container.offsetWidth;
+			var oh = container.offsetHeight;
+			var scale = container.getBoundingClientRect().width/ow;
 			document.getElementById("atext").innerHTML="🚩";
-			document.getElementById("animation").style.left=rect.left+window.scrollX+rect.width/2-10;
-			document.getElementById("animation").style.top=rect.top+window.scrollY+rect.height/2-10;
+			document.getElementById("animation").style.left=(rect.left-ow/2)/scale+ow/2;
+			document.getElementById("animation").style.top=(rect.top-oh/2)/scale+oh/2;
 			if (parseInt(cell.getAttribute('flagged'))==0) {
 				cell.setAttribute('flagged',1);
 				document.getElementById("animation").style.display='block';
@@ -351,7 +355,7 @@ document.getElementsByClassName("hex").onclick = function() {game()};
 
 </script>
 
-<div class="outer-div">
+<div id="outer-div">
   	<div class="inner-div" id="demo"></div><br>
 	<svg id="animation" width="20" height="20" style="display: none">
 		<style>
