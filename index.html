@@ -225,6 +225,7 @@ function game(pos){
 			if (parseInt(cell.getAttribute('flagged'))==0) {
 				cell.setAttribute('flagged',1);
 				document.getElementById("animation").style.display='block';
+				document.getElementById("animation").getAnimations().forEach(a=>a.cancel());
 				document.getElementById("animation").animate([{
 					opacity: 0,
 					transform: 'scale(5) translate(0%, -200%)',
@@ -265,6 +266,7 @@ function game(pos){
 			cell.setAttribute('coin', 0);
 			document.getElementById("animation").style.display='block';
 			document.getElementById('t_'+pos).innerHTML="";
+			document.getElementById("animation").getAnimations().forEach(a=>a.cancel());
 			document.getElementById("animation").animate([
 			{
 				opacity: 1,
