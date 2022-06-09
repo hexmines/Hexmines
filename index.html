@@ -19,6 +19,7 @@ html {
 
 #outer-div
 {
+	/*transform: scale(1.5) translate(50px, 50px)*/;
     padding: 1px;
     text-align: center;
 }
@@ -154,6 +155,21 @@ function valid(pos,n){
 	return false;
 }
 
+function placeAnimation(el){
+	var container=document.getElementById("outer-div");
+	var style = window.getComputedStyle(container);
+	var matrix = style.transform || style.webkitTransform || style.mozTransform;
+	matrix=matrix=="none"||typeof matrix=="undefined"?[1,0,0,1,0,0]:matrix.match(/matrix.*\((.+)\)/)[1].split(',').map(n=>parseFloat(n));
+	var ow = container.offsetWidth;
+	var oh = container.offsetHeight;
+	var scale = matrix[0];
+	var ol = matrix[4];
+	var ot = matrix[5];
+	var rect=el.getBoundingClientRect();
+	document.getElementById("animation").style.left=(rect.left-ow/2-ol)/scale+ow/2;
+	document.getElementById("animation").style.top=(rect.top-oh/2-ot)/scale+oh/2;
+}
+
 function game(pos){
 	if (document.getElementById('lives').value==0 || !shouldCheck){
 		return 0;
@@ -214,14 +230,8 @@ function game(pos){
 		}
 		// Flag/unflag cell
 		if (flag == true && parseInt(cell.getAttribute('clicked'))==0){
-			var rect=event.target.getBoundingClientRect();
-			var container=document.getElementById("outer-div");
-			var ow = container.offsetWidth;
-			var oh = container.offsetHeight;
-			var scale = container.getBoundingClientRect().width/ow;
 			document.getElementById("atext").innerHTML="🚩";
-			document.getElementById("animation").style.left=(rect.left-ow/2)/scale+ow/2;
-			document.getElementById("animation").style.top=(rect.top-oh/2)/scale+oh/2;
+			placeAnimation(event.target);
 			if (parseInt(cell.getAttribute('flagged'))==0) {
 				cell.setAttribute('flagged',1);
 				document.getElementById("animation").style.display='block';
@@ -259,14 +269,12 @@ function game(pos){
 		// Colect coin
 		if (parseInt(cell.getAttribute('clicked'))==1 && parseInt(cell.getAttribute('coin'))==1){
 			document.getElementById('coins').innerHTML=parseInt(document.getElementById('coins').innerHTML)+1;
-			var rect=event.target.getBoundingClientRect();
 			document.getElementById("atext").innerHTML="💰";
-			document.getElementById("animation").style.left=rect.left+window.scrollX+rect.width/2-10;
-			document.getElementById("animation").style.top=rect.top+window.scrollY+rect.height/2-10;
 			cell.setAttribute('coin', 0);
 			document.getElementById("animation").style.display='block';
 			document.getElementById('t_'+pos).innerHTML="";
 			document.getElementById("animation").getAnimations().forEach(a=>a.cancel());
+			placeAnimation(event.target);
 			document.getElementById("animation").animate([
 			{
 				opacity: 1,
