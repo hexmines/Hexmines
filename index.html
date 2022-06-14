@@ -442,6 +442,7 @@ function game(pos, flag){
 				}
 				document.getElementById('message').innerHTML='Sorry, you died. Try again.';
 				localStorage.setItem('time', document.getElementById("timer").innerHTML);
+				localStorage.setItem('complete', true);
 				stop();
 			}
 		}
