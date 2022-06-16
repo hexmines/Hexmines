@@ -34,6 +34,7 @@ body {
     background-position: center bottom;
 	background-color: var(--nimiq-gray);
 	color: var(--nimiq-blue);
+	background-attachment:fixed;
 }
 
 @media (orientation: landscape) {
@@ -81,6 +82,7 @@ text {
 
 span {
 	pointer-events: none;
+	white-space: nowrap;
 }
 
 p {
@@ -573,7 +575,7 @@ document.getElementsByClassName("hex").onclick = function() {game()};
 
 <div class="hud">
 	<p id='message'></p> 
-	<p><span id="live1">❤️</span><span id="live2">❤️</span><span id="live3">❤️</span> 💰x<span id="coins">0</span>/<span id="to_collect">5</span> 💣x<span id="nbombs"></span> 🕑<span id='timer'>0</span></p>
+	<p><span><span id="live1">❤️</span><span id="live2">❤️</span><span id="live3">❤️</span></span> <span>💰x<span id="coins">0</span>/<span id="to_collect">5</span></span> <span>💣x<span id="nbombs"></span></span> <span>🕑<span id='timer'>0</span></span></p>
 	<p><button onclick="restart(false)">Restart</button></p>
 </div>
 
