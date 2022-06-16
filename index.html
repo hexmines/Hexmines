@@ -23,7 +23,22 @@ body {
     width: 100%;
     height: 100%;
     overflow-y: auto;
-   -webkit-overflow-scrolling: touch;
+	-webkit-overflow-scrolling: touch;
+	background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: center bottom;
+}
+
+@media (orientation: landscape) {
+	body {
+		background-image: url(scene-landscape.png);
+	}
+}
+
+@media (orientation: portrait) {
+	body {
+		background-image: url(scene-portrait.png);
+	}
 }
 
 #outer-div
@@ -151,7 +166,7 @@ function restart(load){
 		localStorage.setItem('coins', 0);
 	}
 	document.getElementById('to_collect').innerHTML=5;
-	var n = 6; 
+	var n = 6;
 	localStorage.setItem('nside', n);
 	var nbombs = 12;
 	localStorage.setItem('nbombs', nbombs);
@@ -513,7 +528,7 @@ document.getElementsByClassName("hex").onclick = function() {game()};
 </div>
 
 
-<div style="text-align: center; position: fixed; bottom: 0; left: 0; right: 0;">
+<div style="text-align: center; position: fixed; bottom: 0; left: 0; right: 0; background: rgba(256,256,256,0.5);">
 	<p id='message'></p> 
 	<p><span id="live1">❤️</span><span id="live2">❤️</span><span id="live3">❤️</span> 💰x<span id="coins">0</span>/<span id="to_collect">5</span> 💣x<span id="nbombs"></span> 🕑<span id='timer'>0</span></p>
 	<p><button onclick="restart(false)">Restart</button></p>
