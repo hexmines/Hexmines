@@ -15,6 +15,11 @@
 
 html {
 	font-family: Atari Classic;
+	--nimiq-blue: #1F2348;
+	--nimiq-white: #FFF;
+	--nimiq-gray: #F4F4F4;
+	--nimiq-blue-bg: radial-gradient(100% 100% at bottom right, #260133, var(--nimiq-blue));
+	--nimiq-ease: cubic-bezier(0.25, 0, 0, 1);
 }
 
 body {
@@ -27,6 +32,8 @@ body {
 	background-size: 100%;
     background-repeat: no-repeat;
     background-position: center bottom;
+	background-color: var(--nimiq-gray);
+	color: var(--nimiq-blue);
 }
 
 @media (orientation: landscape) {
@@ -80,6 +87,42 @@ p {
   margin: 0.5em;
 }
 
+button {
+    position: relative;
+    height: 1.875rem;
+    line-height: 0.625rem;
+    background-image: var(--nimiq-blue-bg);
+    color: var(--nimiq-white);
+    font-size: 0.5rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .094em;
+    border: none;
+    padding: 0 1rem;
+    border-radius: 500px;
+    min-width: 6.25rem;
+    margin: 0.5rem auto;
+    box-shadow: 0 0.125rem 0.375rem rgba(0, 0, 0, .15);
+    cursor: pointer;
+    transition: transform 450ms var(--nimiq-ease), box-shadow 450ms var(--nimiq-ease);
+    will-change: box-shadow;
+    text-decoration: none;
+    display: block;
+    text-align: center;
+    font-family:inherit
+}
+
+.hud {
+	text-align: center;
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background: rgba(244,244,244,0.5);
+	background: linear-gradient(0deg, rgba(244,244,244,0.5) 0%, rgba(244,244,244,0.5) 75%, rgba(244,244,244,0) 100%);
+	padding-top: 1.5em;
+}
+
 </style>
 </head>
 
@@ -95,14 +138,14 @@ function Shuffle(o) {
 };
 
 colors={
-	0:'#EEEEEE',
-	1:'#BFB2F3',
-	2:'#96CAF7',
-	3:'#9CDCAA',
-	4:'#E5E1AB',
-	5:'#F3C6A5',
-	6:'#F8A3A8',
-	7:'#FF6961' }
+	0:'#F4F4F4',
+	1:'#0582ca',
+	2:'#41a38e',
+	3:'#21bca5',
+	4:'#fc8701',
+	5:'#fd6216',
+	6:'#d94432',
+	7:'#d94432' }
 
 function addv(a,b){
 	c=[];
@@ -195,10 +238,10 @@ function restart(load){
 	  		points=hex.toString();
 			var id = [i,j].toString();
 	  		text+='<g id="g_'+id+'">'
-				+'<polygon class="hex" id="'+id+'" points="'+ points +'" style="fill:#aaaaaa;stroke:purple;stroke-width:'+(5/n).toString()+'"/>'
+				+'<polygon class="hex" id="'+id+'" points="'+ points +'" style="fill:#ec991c;stroke:var(--nimiq-blue);stroke-width:'+(5/n).toString()+'"/>'
 				+'<text x="'+(hex[4]*0.3+hex[10]*0.7+6)+'" y="'+(hex[5]*0.25+hex[11]*0.75-3)+'" type="hidden" id="t_'+id+'" class="heavy"></text>'
 				+'</g>';
-	  		// text = text+ '<polygon class="hex" clicked=0 mined=-1 id="'+[i,j].toString()+' "points="'+ points +'" style="fill:#aaaaaa;stroke:purple;stroke-width:1" onclick="game(['+[i,j].toString()+'])" />';
+	  		// text = text+ '<polygon class="hex" clicked=0 mined=-1 id="'+[i,j].toString()+' "points="'+ points +'" style="fill:#ec991c;stroke:purple;stroke-width:1" onclick="game(['+[i,j].toString()+'])" />';
 	  		
 	  		// text = text+'<text x="'+(parseInt(hex[0])+parseInt(hex[6]))/2+'" y="'+(hex[1]+hex[7])/2+'" id="t'+[i,j].toString()+' class="heavy" onclick="game(['+[i,j].toString()+'])">9</text>';
 	  		// s+=1;
@@ -215,7 +258,7 @@ function restart(load){
 				var el = document.getElementById('g_'+id);
 				if (load) {
 					document.getElementById('t_'+id).innerHTML = localStorage.getItem('text'+id)||"";
-					document.getElementById(id).style.fill = colors[parseInt(localStorage.getItem('color'+id))]||'#aaaaaa';
+					document.getElementById(id).style.fill = colors[parseInt(localStorage.getItem('color'+id))]||'#ec991c';
 					if ((parseInt(localStorage.getItem('mined'+id))==0)&&(parseInt(localStorage.getItem('clicked'+id))==1)){
 						to_go -= 1;
 					}
@@ -225,9 +268,9 @@ function restart(load){
 					localStorage.setItem('flagged'+id, 0);
 					localStorage.setItem('coin'+id, 0);
 					localStorage.setItem('text'+id, "");
-					localStorage.setItem('color'+id, "#aaaaaa");
+					localStorage.setItem('color'+id, "#ec991c");
 					document.getElementById('t_'+id).innerHTML = "";
-					document.getElementById(id).style.fill = '#aaaaaa';
+					document.getElementById(id).style.fill = '#ec991c';
 				}
 				el.addEventListener('click', e => {
 					e.preventDefault();
@@ -528,7 +571,7 @@ document.getElementsByClassName("hex").onclick = function() {game()};
 </div>
 
 
-<div style="text-align: center; position: fixed; bottom: 0; left: 0; right: 0; background: rgba(256,256,256,0.5);">
+<div class="hud">
 	<p id='message'></p> 
 	<p><span id="live1">❤️</span><span id="live2">❤️</span><span id="live3">❤️</span> 💰x<span id="coins">0</span>/<span id="to_collect">5</span> 💣x<span id="nbombs"></span> 🕑<span id='timer'>0</span></p>
 	<p><button onclick="restart(false)">Restart</button></p>
