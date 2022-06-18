@@ -34,7 +34,7 @@ body {
     background-position: center bottom;
 	background-color: var(--nimiq-gray);
 	color: var(--nimiq-blue);
-	background-attachment:fixed;
+	background-attachment: fixed;
 }
 
 @media (orientation: landscape) {
@@ -125,6 +125,40 @@ button {
 	padding-top: 1.5em;
 }
 
+#tutorial-div {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: var(--nimiq-gray);
+	transition: opacity .125s linear;
+}
+
+.tutorial-dialog {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	-webkit-transform: translate(-50%, -50%);
+	transform: translate(-50%, -50%);
+}
+
+.tutorial-img {
+	border: 2px solid var(--nimiq-blue);
+}
+
+@media (hover: hover) {
+	.tutorial-img {
+		content: url(tutorial-mouse.gif);
+	}
+}
+
+@media (hover: none) {
+	.tutorial-img {
+		content: url(tutorial-touch.gif);
+	}
+}
+
 </style>
 </head>
 
@@ -163,6 +197,16 @@ function mult(a,k){
 		c.push(a[i0]*k);
 	}
 	return c;					
+}
+
+function hideTutorial(){
+	document.getElementById("tutorial-div").style.display = "none";
+}
+
+function fadeOutTutorial(){
+	document.getElementById("tutorial-div").addEventListener("webkitTransitionEnd", hideTutorial);
+	document.getElementById("tutorial-div").addEventListener("transitionend", hideTutorial);
+	document.getElementById("tutorial-div").style.opacity = 0;
 }
 
 function restart(load){
@@ -577,6 +621,14 @@ document.getElementsByClassName("hex").onclick = function() {game()};
 	<p id='message'></p> 
 	<p><span><span id="live1">❤️</span><span id="live2">❤️</span><span id="live3">❤️</span></span> <span>💰x<span id="coins">0</span>/<span id="to_collect">5</span></span> <span>💣x<span id="nbombs"></span></span> <span>🕑<span id='timer'>0</span></span></p>
 	<p><button onclick="restart(false)">Restart</button></p>
+</div>
+
+
+<div id="tutorial-div">
+	<div class="tutorial-dialog">
+		<img class="tutorial-img">
+		<button onclick="fadeOutTutorial()">Start</button>
+	</div>
 </div>
 
 
