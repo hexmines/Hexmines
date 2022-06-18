@@ -152,18 +152,18 @@ button {
 	transform: translate(-50%, -50%);
 }
 
-.tutorial-img {
+#tutorial-img {
 	border: 2px solid var(--nimiq-blue);
 }
 
 @media (hover: hover) {
-	.tutorial-img {
+	#tutorial-img {
 		content: url(tutorial-mouse.gif);
 	}
 }
 
 @media (hover: none) {
-	.tutorial-img {
+	#tutorial-img {
 		content: url(tutorial-touch.gif);
 	}
 }
@@ -209,6 +209,7 @@ function mult(a,k){
 }
 
 function showTutotial() {
+	document.getElementById("tutorial-img").style.content = window.getComputedStyle(document.getElementById("tutorial-img")).content;
 	document.getElementById("tutorial-div").style.visibility = "visible";
 	document.getElementById("tutorial-div").style.opacity = 1;
 }
@@ -647,7 +648,7 @@ document.getElementsByClassName("hex").onclick = function() {game()};
 
 <div id="tutorial-div">
 	<div class="tutorial-dialog">
-		<img class="tutorial-img">
+		<img id="tutorial-img">
 		<button onclick="fadeOutTutorial()">Ok</button>
 	</div>
 </div>
