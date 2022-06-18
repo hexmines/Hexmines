@@ -388,8 +388,8 @@ function placeAnimation(el){
 	var ol = matrix[4];
 	var ot = matrix[5];
 	var rect=el.getBoundingClientRect();
-	document.getElementById("animation").style.left=(rect.left-ow/2-ol)/scale+ow/2+6;
-	document.getElementById("animation").style.top=(rect.top-oh/2-ot)/scale+oh/2+6;
+	document.getElementById("animation").style.left=(rect.left-ow/2-ol)/scale+ow/2+window.scrollX+6;
+	document.getElementById("animation").style.top=(rect.top-oh/2-ot)/scale+oh/2+window.scrollY+6;
 }
 
 function game(pos, flag){
