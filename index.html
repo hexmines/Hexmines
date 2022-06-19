@@ -121,6 +121,7 @@ button {
 	margin-top: 0.5em;
 	margin-right: 0.5em;
 	cursor: pointer;
+	font-size: 2em;
 }
 
 .hud {
@@ -169,6 +170,65 @@ button {
 	#tutorial-touch {
 		display: block !important;
 	}
+}
+
+.tutorial-text {
+	max-width: 500px;
+}
+
+.podium {
+  display: flex;
+  align-items: flex-end;
+  margin-top: .5em;
+  width: 320px;
+}
+
+.podium p {
+	margin: 0;
+}
+
+.podium svg {
+	width: 100%;
+	height: 100%;
+}
+
+.podium-item {
+  width: 80px;
+}
+
+.podium-rank {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1em;
+  color: #fff;
+}
+
+.podium-icon {
+  text-align: center;
+  height: 3em;
+}
+
+.podium .first {
+  min-height: 2em;
+  background: #fc8701;
+}
+
+.podium .second {
+  min-height: 1.25em;
+  background: #0582ca;
+}
+
+.podium .third {
+  min-height: 1em;
+  background: #41a38e;
+}
+
+.podium .forth {
+  min-height: 1em;
+  color: var(--nimiq-blue);
+  background: black;
+  min-height: 0.1em;
 }
 
 </style>
