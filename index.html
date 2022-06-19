@@ -152,19 +152,22 @@ button {
 	transform: translate(-50%, -50%);
 }
 
-#tutorial-img {
+.tutorial-video {
 	border: 2px solid var(--nimiq-blue);
+	display: none;
+	width: 320px;
+	height: 286px;
 }
 
 @media (hover: hover) {
-	#tutorial-img {
-		content: url(tutorial-mouse.gif);
+	#tutorial-mouse {
+		display: block !important;
 	}
 }
 
 @media (hover: none) {
-	#tutorial-img {
-		content: url(tutorial-touch.gif);
+	#tutorial-touch {
+		display: block !important;
 	}
 }
 
@@ -209,8 +212,15 @@ function mult(a,k){
 }
 
 function showTutotial() {
-	var url = window.getComputedStyle(document.getElementById("tutorial-img")).content.match(/url\("([^?\)"]*)\?*.*"\)/)[1];
-	document.getElementById("tutorial-img").style.content = "url(" + url + "?" + new Date().getTime() + ")";
+	var video;
+	if (window.getComputedStyle(document.getElementById("tutorial-mouse")).display == "block") {
+		video = document.getElementById("tutorial-mouse");
+	} else {
+		video = document.getElementById("tutorial-touch");
+	}
+	video.pause();
+	video.currentTime = 0;
+	video.play();
 	document.getElementById("tutorial-div").style.visibility = "visible";
 	document.getElementById("tutorial-div").style.opacity = 1;
 }
@@ -649,7 +659,12 @@ document.getElementsByClassName("hex").onclick = function() {game()};
 
 <div id="tutorial-div">
 	<div class="tutorial-dialog">
-		<span id="tutorial-img"></span>
+		<video id="tutorial-mouse" class="tutorial-video" playsinline autoplay muted loop>
+			<source src="tutorial-mouse.mp4" type="video/mp4">
+		</video>
+		<video id="tutorial-touch" class="tutorial-video" playsinline autoplay muted loop>
+			<source src="tutorial-touch.mp4" type="video/mp4">
+		</video>
 		<button onclick="fadeOutTutorial()">Ok</button>
 	</div>
 </div>
