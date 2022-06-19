@@ -209,7 +209,8 @@ function mult(a,k){
 }
 
 function showTutotial() {
-	document.getElementById("tutorial-img").style.content = window.getComputedStyle(document.getElementById("tutorial-img")).content;
+	var url = window.getComputedStyle(document.getElementById("tutorial-img")).content.match(/url\("([^?\)"]*)\?*.*"\)/)[1];
+	document.getElementById("tutorial-img").style.content = "url(" + url + "?" + new Date().getTime() + ")";
 	document.getElementById("tutorial-div").style.visibility = "visible";
 	document.getElementById("tutorial-div").style.opacity = 1;
 }
