@@ -231,6 +231,23 @@ button {
   min-height: 0.1em;
 }
 
+@keyframes jump {
+	0% {
+		transform: translate(0, 0) scale(1, 1);
+	}
+	40% {
+		transform: translate(0, -10%) scale(.95, 1.05);
+	}
+	100% {
+		transform: translate(0, -25%) scale(1.05, .95);
+	}
+}
+
+.jump {
+  transform-origin: 50% 50%;
+  animation: jump .5s linear alternate infinite;
+}
+
 </style>
 </head>
 
@@ -717,16 +734,19 @@ document.getElementsByClassName("hex").onclick = function() {game()};
 </div>
 
 
-<div id="tutorial-div">
-	<div class="tutorial-dialog">
-		<center>
-			<p class="tutorial-text">Minesweeper 💣, but on a hexagonal grid. Play and receive rewards in <a href="https://nimiq.com" target="_blank">Nimiq</a> (NIM) cryptocurrency for free 💰</p>
+<div id="tutorial-div" style="height: 100%;">
+	<div class="tutorial-dialog" style="height: 100%">
+		<center style="height: 100%; display: flex; flex-direction: column;">
+			<div style="flex-grow: 1;"></div>
+			<p class="tutorial-text">Minesweeper 💣, but on a hexagonal grid. Play and receive rewards 💰 in <a href="https://nimiq.com" target="_blank">Nimiq</a> (NIM) cryptocurrency for free.</p>
+			<div style="flex-grow: 1; max-height: 2em;"></div>
 			<video id="tutorial-mouse" class="tutorial-video" playsinline autoplay muted loop>
 				<source src="tutorial-mouse.mp4" type="video/mp4">
 			</video>
 			<video id="tutorial-touch" class="tutorial-video" playsinline autoplay muted loop>
 				<source src="tutorial-touch.mp4" type="video/mp4">
 			</video>
+			<div style="flex-grow: 1; max-height: 1em;"></div>
 			<div class="podium">
 				<div class="podium-item">
 					<p id="podium_2" class="podium-icon"></p>
@@ -746,7 +766,9 @@ document.getElementsByClassName("hex").onclick = function() {game()};
 					<div class="podium-rank forth"></div>
 				</div>
 			</div>
+			<div style="flex-grow: 1; max-height: 1em;"></div>
 			<button onclick="fadeOutTutorial()">Ok</button>
+			<div style="flex-grow: 1;"></div>
 		</center>
 	</div>
 </div>
@@ -776,6 +798,7 @@ window.onload = async function() {
 	document.getElementById("podium_2").innerHTML = await Identicons.svg(Math.random().toString());
 	document.getElementById("podium_3").innerHTML = await Identicons.svg(Math.random().toString());
 	document.getElementById("podium_4").innerHTML = await Identicons.svg(Math.random().toString());
+	document.getElementById("podium_4").classList.add("jump");
 };
 
 function changeValue() {
