@@ -719,18 +719,40 @@ document.getElementsByClassName("hex").onclick = function() {game()};
 
 <div id="tutorial-div">
 	<div class="tutorial-dialog">
-		<video id="tutorial-mouse" class="tutorial-video" playsinline autoplay muted loop>
-			<source src="tutorial-mouse.mp4" type="video/mp4">
-		</video>
-		<video id="tutorial-touch" class="tutorial-video" playsinline autoplay muted loop>
-			<source src="tutorial-touch.mp4" type="video/mp4">
-		</video>
-		<button onclick="fadeOutTutorial()">Ok</button>
+		<center>
+			<p class="tutorial-text">Minesweeper 💣, but on a hexagonal grid. Play and receive rewards in <a href="https://nimiq.com" target="_blank">Nimiq</a> (NIM) cryptocurrency for free 💰</p>
+			<video id="tutorial-mouse" class="tutorial-video" playsinline autoplay muted loop>
+				<source src="tutorial-mouse.mp4" type="video/mp4">
+			</video>
+			<video id="tutorial-touch" class="tutorial-video" playsinline autoplay muted loop>
+				<source src="tutorial-touch.mp4" type="video/mp4">
+			</video>
+			<div class="podium">
+				<div class="podium-item">
+					<p id="podium_2" class="podium-icon"></p>
+					<div class="podium-rank second">2</div>
+				</div>
+				<div class="podium-item">
+					<p id="podium_1" class="podium-icon"></p>
+					<div class="podium-rank first">1</div>
+				</div>
+				<div class="podium-item">
+					<p id="podium_3" class="podium-icon"></p>
+					<div class="podium-rank third">3</div>
+				</div>
+				<div class="podium-item">
+					<p id="podium_4" class="podium-icon"></p>
+					25
+					<div class="podium-rank forth"></div>
+				</div>
+			</div>
+			<button onclick="fadeOutTutorial()">Ok</button>
+		</center>
 	</div>
 </div>
 
 
-<script>
+<script type="module">
 	/*
 	slider.oninput = function() {
 		output.innerHTML = this.value;
@@ -744,8 +766,16 @@ document.getElementsByClassName("hex").onclick = function() {game()};
 	}
 	*/
 
-window.onload = function() {
+import Identicons from './identicons.min.js';
+
+window.NIMIQ_IDENTICONS_SVG_PATH = "./identicons.min.svg";
+
+window.onload = async function() {
 	restart(true);
+	document.getElementById("podium_1").innerHTML = await Identicons.svg(Math.random().toString());
+	document.getElementById("podium_2").innerHTML = await Identicons.svg(Math.random().toString());
+	document.getElementById("podium_3").innerHTML = await Identicons.svg(Math.random().toString());
+	document.getElementById("podium_4").innerHTML = await Identicons.svg(Math.random().toString());
 };
 
 function changeValue() {
