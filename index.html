@@ -153,6 +153,10 @@ button {
 	transform: translate(-50%, -50%);
 }
 
+.tutorial-dialog * {
+	margin: auto;
+}
+
 .tutorial-video {
 	border: 2px solid var(--nimiq-blue);
 	display: none;
@@ -183,8 +187,9 @@ button {
   width: 320px;
 }
 
-.podium p {
+.podium * {
 	margin: 0;
+	margin-top: auto;
 }
 
 .podium svg {
@@ -239,7 +244,7 @@ button {
 		transform: translate(0, -10%) scale(.95, 1.05);
 	}
 	100% {
-		transform: translate(0, -25%) scale(1.05, .95);
+		transform: translate(0, -20%) scale(1.05, .95);
 	}
 }
 
@@ -798,7 +803,7 @@ window.onload = async function() {
 	document.getElementById("podium_2").innerHTML = await Identicons.svg(Math.random().toString());
 	document.getElementById("podium_3").innerHTML = await Identicons.svg(Math.random().toString());
 	document.getElementById("podium_4").innerHTML = await Identicons.svg(Math.random().toString());
-	document.getElementById("podium_4").classList.add("jump");
+	document.getElementById("podium_1").classList.add("jump");
 };
 
 function changeValue() {
