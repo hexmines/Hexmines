@@ -504,10 +504,11 @@ function restart(load){
 		document.getElementById('coins').innerHTML = 0;
 		localStorage.setItem('coins', 0);
 	}
-	document.getElementById('to_collect').innerHTML=10;
-	var n = 16;
+	var n = 6; // number of cells per side
+	var nbombs = 10; // number er of mines
+	var ncoins = 5; // number of coins to collect
+	document.getElementById('to_collect').innerHTML=ncoins;
 	localStorage.setItem('nside', n);
-	var nbombs = 180;
 	localStorage.setItem('nbombs', nbombs);
 	document.getElementById("nbombs").innerHTML = nbombs;
 	var s=0;
