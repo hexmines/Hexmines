@@ -99,7 +99,7 @@ button {
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: .094em;
-    border: none;
+    border: 1px solid var(--nimiq-gray);
     padding: 0 1rem;
     border-radius: 500px;
     min-width: 6.25rem;
@@ -130,9 +130,7 @@ button {
 	bottom: 0;
 	left: 0;
 	right: 0;
-	background: rgba(244,244,244,0.5);
-	background: linear-gradient(0deg, rgba(244,244,244,0.5) 0%, rgba(244,244,244,0.5) 75%, rgba(244,244,244,0) 100%);
-	padding-top: 1.5em;
+	text-shadow: -1px -1px 0 var(--nimiq-gray), 1px -1px 0 var(--nimiq-gray), -1px 1px 0 var(--nimiq-gray), 1px 1px 0 var(--nimiq-gray);
 }
 
 #tutorial-div {
@@ -142,7 +140,6 @@ button {
 	width: 100%;
 	height: 100%;
 	background-color: var(--nimiq-gray);
-	transition: opacity .125s linear;
 }
 
 .tutorial-dialog {
@@ -253,6 +250,74 @@ button {
   animation: jump .5s linear alternate infinite;
 }
 
+#lost-div {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-image: url(scene-lost.png);
+	background-size: auto 100%;
+    background-repeat: no-repeat;
+    background-position: right bottom;
+	background-color: var(--nimiq-gray);
+	color: var(--nimiq-blue);
+	background-attachment: fixed;
+	visibility: hidden;
+}
+
+@media only screen and (max-aspect-ratio: 1505/524) {
+	#lost-div {
+		background-size: 100%;
+	}
+}
+
+#lost-div div {
+	margin: 0;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+#lost-div p {
+	text-shadow: -1px -1px 0 var(--nimiq-gray), 1px -1px 0 var(--nimiq-gray), -1px 1px 0 var(--nimiq-gray), 1px 1px 0 var(--nimiq-gray);
+}
+
+#won-div {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-image: url(scene-won.png);
+	background-size: auto 100%;
+    background-repeat: no-repeat;
+    background-position: left bottom;
+	background-color: var(--nimiq-gray);
+	color: var(--nimiq-blue);
+	background-attachment: fixed;
+	visibility: hidden;
+}
+
+@media only screen and (max-aspect-ratio: 973/867) {
+	#won-div {
+		background-size: 100%;
+	}
+}
+
+#won-div div {
+	margin: 0;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+#won-div p {
+	text-shadow: -1px -1px 0 var(--nimiq-gray), 1px -1px 0 var(--nimiq-gray), -1px 1px 0 var(--nimiq-gray), 1px 1px 0 var(--nimiq-gray);
+}
+
 </style>
 </head>
 
@@ -293,7 +358,7 @@ function mult(a,k){
 	return c;					
 }
 
-function showTutotial() {
+function showTutorial() {
 	var video;
 	if (window.getComputedStyle(document.getElementById("tutorial-mouse")).display == "block") {
 		video = document.getElementById("tutorial-mouse");
@@ -304,25 +369,35 @@ function showTutotial() {
 	video.currentTime = 0;
 	video.play();
 	document.getElementById("tutorial-div").style.visibility = "visible";
-	document.getElementById("tutorial-div").style.opacity = 1;
 }
 
 function hideTutorial(){
 	document.getElementById("tutorial-div").style.visibility = "hidden";
-	document.getElementById("tutorial-div").removeEventListener("webkitTransitionEnd", hideTutorial);
-	document.getElementById("tutorial-div").removeEventListener("transitionend", hideTutorial);
 }
 
-function fadeOutTutorial(){
-	document.getElementById("tutorial-div").addEventListener("webkitTransitionEnd", hideTutorial);
-	document.getElementById("tutorial-div").addEventListener("transitionend", hideTutorial);
-	document.getElementById("tutorial-div").style.opacity = 0;
+function changeValue() {
+  document.getElementById("timer").innerHTML = Math.round((new Date().getTime() - value)/1000);
+}
+
+var timerInterval = null;
+function start() {
+	stop(); // stoping the previous counting (if any)
+	if (!value) {
+		value = new Date().getTime();
+		localStorage.setItem('start', value);
+	}
+	timerInterval = setInterval(changeValue, 1000);
+}
+
+var stop = function() {
+	clearInterval(timerInterval);
 }
 
 function restart(load){
 	load = (load && localStorage.getItem('load')==='true') || false;
 	stop();
-	document.getElementById('message').innerHTML='';
+	document.getElementById('won-div').style.visibility = 'hidden';
+	document.getElementById('lost-div').style.visibility = 'hidden';
 	if (load) {
 		value = localStorage.getItem('start');
 		if (value) {
@@ -462,10 +537,10 @@ function restart(load){
 	if (load) {
 		localStorage.setItem('to_go', to_go);
 		if (to_go<1 && parseInt(localStorage.getItem('coins')) >= parseInt(document.getElementById('to_collect').innerHTML)){
-			document.getElementById('message').innerHTML='CONGRATULATIONS, YOU WON!!';
+			document.getElementById('won-div').style.visibility = "visible";
 			document.getElementById("timer").innerHTML=parseInt(localStorage.getItem('time'));
 		} else if (parseInt(localStorage.getItem('lives')) == 0) {
-			document.getElementById('message').innerHTML='Sorry, you died. Try again.';
+			document.getElementById('lost-div').style.visibility = "visible";
 			document.getElementById("timer").innerHTML=parseInt(localStorage.getItem('time'))
 		} else if (value) {
 			start();
@@ -654,7 +729,7 @@ function game(pos, flag){
 						document.getElementById('t_'+id).innerHTML="💣";
 					}
 				}
-				document.getElementById('message').innerHTML='Sorry, you died. Try again.';
+				document.getElementById('lost-div').style.visibility = "visible";
 				localStorage.setItem('time', document.getElementById("timer").innerHTML);
 				localStorage.setItem('complete', true);
 				stop();
@@ -699,7 +774,7 @@ function game(pos, flag){
 		}
 		// Game completed
 		if (parseInt(localStorage.getItem('to_go'))<1 && parseInt(localStorage.getItem('coins')) >= parseInt(document.getElementById('to_collect').innerHTML)){
-			document.getElementById('message').innerHTML='CONGRATULATIONS, YOU WON!!';
+			document.getElementById('won-div').style.visibility='visible';
 			localStorage.setItem('time', document.getElementById("timer").innerHTML);
 			localStorage.setItem('complete', true);
 			stop();
@@ -728,18 +803,17 @@ document.getElementsByClassName("hex").onclick = function() {game()};
 
 
 <div class="info-div">
-	<span onclick="showTutotial()">ℹ️</span>
+	<span onclick="showTutorial()">ℹ️</span>
 </div>
 
 
 <div class="hud">
-	<p id='message'></p> 
 	<p><span><span id="live1">❤️</span><span id="live2">❤️</span><span id="live3">❤️</span></span> <span>💰x<span id="coins">0</span>/<span id="to_collect">5</span></span> <span>💣x<span id="nbombs"></span></span> <span>🕑<span id='timer'>0</span></span></p>
 	<p><button onclick="restart(false)">Restart</button></p>
 </div>
 
 
-<div id="tutorial-div" style="height: 100%;">
+<div id="tutorial-div">
 	<div class="tutorial-dialog" style="height: 100%">
 		<center style="height: 100%; display: flex; flex-direction: column;">
 			<div style="flex-grow: 1;"></div>
@@ -772,9 +846,23 @@ document.getElementsByClassName("hex").onclick = function() {game()};
 				</div>
 			</div>
 			<div style="flex-grow: 1; max-height: 1em;"></div>
-			<button onclick="fadeOutTutorial()">Ok</button>
+			<button onclick="hideTutorial()">Ok</button>
 			<div style="flex-grow: 1;"></div>
 		</center>
+	</div>
+</div>
+
+<div id="won-div">
+	<div>
+		<p>CONGRATULATIONS, YOU WON!!</p>
+		<p><button onclick="restart(false)">Restart</button></p>	
+	</div>
+</div>
+
+<div id="lost-div">
+	<div>
+		<p>Sorry, you died. Try again.</p>
+		<p><button onclick="restart(false)">Restart</button></p>	
 	</div>
 </div>
 
@@ -805,24 +893,6 @@ window.onload = async function() {
 	document.getElementById("podium_4").innerHTML = await Identicons.svg(Math.random().toString());
 	document.getElementById("podium_1").classList.add("jump");
 };
-
-function changeValue() {
-  document.getElementById("timer").innerHTML = Math.round((new Date().getTime() - value)/1000);
-}
-
-var timerInterval = null;
-function start() {
-	stop(); // stoping the previous counting (if any)
-	if (!value) {
-		value = new Date().getTime();
-		localStorage.setItem('start', value);
-	}
-	timerInterval = setInterval(changeValue, 1000);
-}
-
-var stop = function() {
-	clearInterval(timerInterval);
-}
 
 </script>
 </body>
