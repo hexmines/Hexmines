@@ -133,6 +133,33 @@ button {
 	text-shadow: -1px -1px 0 var(--nimiq-gray), 1px -1px 0 var(--nimiq-gray), -1px 1px 0 var(--nimiq-gray), 1px 1px 0 var(--nimiq-gray);
 }
 
+#loading-div {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: var(--nimiq-gray);
+	color: var(--nimiq-blue);
+}
+
+.progress-container {
+	margin: 0;
+	padding: 2px;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 50%;
+	height: 1em;
+	accent-color: var(--nimiq-blue);
+	border: 2px solid var(--nimiq-blue);
+}
+
+#progress-bar {
+	background-color: var(--nimiq-blue);
+}
+
 #tutorial-div {
 	position: absolute;
 	top: 0;
@@ -158,7 +185,7 @@ button {
 	border: 2px solid var(--nimiq-blue);
 	display: none;
 	width: 320px;
-	height: 286px;
+	height: 285px;
 }
 
 @media (hover: hover) {
@@ -282,6 +309,7 @@ button {
 
 #lost-div p {
 	text-shadow: -1px -1px 0 var(--nimiq-gray), 1px -1px 0 var(--nimiq-gray), -1px 1px 0 var(--nimiq-gray), 1px 1px 0 var(--nimiq-gray);
+	text-align: center;
 }
 
 #won-div {
@@ -316,6 +344,7 @@ button {
 
 #won-div p {
 	text-shadow: -1px -1px 0 var(--nimiq-gray), 1px -1px 0 var(--nimiq-gray), -1px 1px 0 var(--nimiq-gray), 1px 1px 0 var(--nimiq-gray);
+	text-align: center;
 }
 
 </style>
@@ -326,6 +355,41 @@ button {
 
 
 <script>
+
+var assetToLoad = [
+	'scene-landscape.png',
+	'scene-portrait.png',
+	'scene-lost.png',
+	'scene-won.png',
+	'tutorial-touch.mp4',
+	'font.svg',
+	'identicons.min.svg',
+	'tutorial-mouse.mp4'
+];
+var loadedAssets = 0;
+
+for (var i=0; i<assetToLoad.length; i++) {
+	fetch(assetToLoad[i], {
+		mode: 'cors',
+		headers: {
+			'Access-Control-Allow-Origin':'*'
+		}
+	}).then((response) => {
+		if(response.ok) {
+			loadedAssets ++;
+			if (loadedAssets == assetToLoad.length) {
+				document.getElementById('loading-div').style.visibility = 'hidden';
+				//console.log('loaded');
+			}
+			else {
+				document.getElementById('progress-bar').style.width = Math.round(100*loadedAssets/assetToLoad.length) + '%';
+				//console.log((100*loadedAssets/assetToLoad.length) + '%');
+			}
+		}
+    }).catch((error) => {
+		console.log(error.message);
+	});
+}
 
 function Shuffle(o) {
 	for(var j, x, i = o.length; i; j = parseInt(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
@@ -801,7 +865,6 @@ document.getElementsByClassName("hex").onclick = function() {game()};
 	</svg>
 </div>
 
-
 <div class="info-div">
 	<span onclick="showTutorial()">ℹ️</span>
 </div>
@@ -811,7 +874,6 @@ document.getElementsByClassName("hex").onclick = function() {game()};
 	<p><span><span id="live1">❤️</span><span id="live2">❤️</span><span id="live3">❤️</span></span> <span>💰x<span id="coins">0</span>/<span id="to_collect">5</span></span> <span>💣x<span id="nbombs"></span></span> <span>🕑<span id='timer'>0</span></span></p>
 	<p><button onclick="restart(false)">Restart</button></p>
 </div>
-
 
 <div id="tutorial-div">
 	<div class="tutorial-dialog" style="height: 100%">
@@ -849,6 +911,12 @@ document.getElementsByClassName("hex").onclick = function() {game()};
 			<button onclick="hideTutorial()">Ok</button>
 			<div style="flex-grow: 1;"></div>
 		</center>
+	</div>
+</div>
+
+<div id="loading-div">
+	<div class="progress-container">
+		<div id="progress-bar" style="width:0%; height: 100%;"></div>
 	</div>
 </div>
 
