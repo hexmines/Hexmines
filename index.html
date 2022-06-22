@@ -973,8 +973,7 @@ window.onload = async function() {
 	document.getElementById("podium_4").innerHTML = await Identicons.svg(Math.random().toString());
 	document.getElementById("podium_1").classList.add("jump");
 	var pz = new PinchZoom(document.getElementById("outer-div"), {});
-	const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0)
-	const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0)
+	pz.handleDoubleTap = () => {};
 	if (window.getComputedStyle(document.getElementById("tutorial-mouse")).display == "block") {
 		pz.zoomFactor = 0.8;
 		pz.initialOffset.x = -(pz.container.offsetWidth / 2 - pz.el.offsetWidth);
