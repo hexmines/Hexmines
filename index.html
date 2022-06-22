@@ -593,6 +593,13 @@ function restart(load){
 						game([i,j], false);
 					}
 				});
+				el.addEventListener('touchmove', e => {
+					e.preventDefault();
+					if (e.touches.length > 1 && timer) {
+						clearTimeout(timer);
+						timer=null;
+					}
+				});
 				el.addEventListener('selectstart', e => {
 					e.preventDefault();
 				});
