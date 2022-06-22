@@ -51,6 +51,7 @@ body {
 
 #outer-div
 {
+	transform-origin: 0% 0%;
 	/*transform: scale(1.5) translate(50px, 50px);*/
     padding: 1px;
     text-align: center;
@@ -627,18 +628,16 @@ function valid(pos,n){
 }
 
 function placeAnimation(el){
-	var container=document.getElementById("outer-div");
-	var style = window.getComputedStyle(container);
+	var style = window.getComputedStyle(document.getElementById("outer-div"));
 	var matrix = style.transform || style.webkitTransform || style.mozTransform;
 	matrix=matrix=="none"||typeof matrix=="undefined"?[1,0,0,1,0,0]:matrix.match(/matrix.*\((.+)\)/)[1].split(',').map(n=>parseFloat(n));
-	var ow = container.offsetWidth;
-	var oh = container.offsetHeight;
 	var scale = matrix[0];
 	var ol = matrix[4];
 	var ot = matrix[5];
+	console.log(matrix);
 	var rect=el.getBoundingClientRect();
-	document.getElementById("animation").style.left=(rect.left-ow/2-ol)/scale+ow/2+window.scrollX+6;
-	document.getElementById("animation").style.top=(rect.top-oh/2-ot)/scale+oh/2+window.scrollY+6;
+	document.getElementById("animation").style.left=(rect.left-ol)/scale+window.scrollX/scale+6/scale;
+	document.getElementById("animation").style.top=(rect.top-ot)/scale+window.scrollY/scale+6/scale;
 }
 
 function game(pos, flag){
