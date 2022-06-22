@@ -976,10 +976,15 @@ window.onload = async function() {
 	const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0)
 	const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0)
 	if (window.getComputedStyle(document.getElementById("tutorial-mouse")).display == "block") {
-		pz.scaleTo(pz.zoomFactor * 0.8, {x: vw/2, y: 0});
+		pz.zoomFactor = 0.8;
+		pz.initialOffset.x = -(pz.container.offsetWidth / 2 - pz.el.offsetWidth);
+		pz.initialOffset.y = 0;
 	} else {
-		pz.addOffset({x: 0, y: vh/2 - pz.el.offsetHeight/2});
+		pz.zoomFactor = 1;
+		pz.initialOffset.x = 0;
+		pz.initialOffset.y = 0;
 	}
+	pz.resetOffset();
 };
 
 </script>
