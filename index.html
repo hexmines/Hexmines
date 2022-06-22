@@ -577,8 +577,10 @@ function restart(load){
 					game([i,j], true);
 				});
 				var timer=null;
+				var touchPosition;
 				el.addEventListener('touchstart', e => {
 					e.preventDefault();
+					touchPosition = [e.touches[0].screenX, e.touches[0].screenY];
 					timer = setTimeout(() => {
 						clearTimeout(timer);
 						timer=null;
@@ -595,7 +597,10 @@ function restart(load){
 				});
 				el.addEventListener('touchmove', e => {
 					e.preventDefault();
-					if (e.touches.length > 1 && timer) {
+					if ((e.touches.length > 1
+							|| Math.abs(e.touches[0].screenX - touchPosition[0]) > 4
+							|| Math.abs(e.touches[0].screenY - touchPosition[1]) > 4)
+						&& timer) {
 						clearTimeout(timer);
 						timer=null;
 					}
