@@ -361,6 +361,8 @@ svg {
 
 <script>
 
+var pz;
+
 var assetToLoad = [
 	'scene-landscape.png',
 	'scene-portrait.png',
@@ -465,6 +467,11 @@ var stop = function() {
 function restart(load){
 	load = (load && localStorage.getItem('load')==='true') || false;
 	stop();
+	if (pz) {
+		pz.zoomFactor = pz.initialZoomFactor;
+		pz.resetOffset();
+		pz.update();
+	} 
 	document.getElementById('won-div').style.visibility = 'hidden';
 	document.getElementById('lost-div').style.visibility = 'hidden';
 	if (load) {
@@ -977,16 +984,17 @@ window.onload = async function() {
 	document.getElementById("podium_3").innerHTML = await Identicons.svg(Math.random().toString());
 	document.getElementById("podium_4").innerHTML = await Identicons.svg(Math.random().toString());
 	document.getElementById("podium_1").classList.add("jump");
-	var pz = new PinchZoom(document.getElementById("outer-div"), {});
+	pz = new PinchZoom(document.getElementById("outer-div"), {});
 	pz.handleDoubleTap = () => {};
 	if (window.getComputedStyle(document.getElementById("tutorial-mouse")).display == "block") {
-		var fs = 0.8;
 		var p = parseFloat(window.getComputedStyle(document.getElementById("demo")).getPropertyValue("padding-left"));
-		pz.zoomFactor = fs;
-		pz.initialOffset.x = -(pz.container.offsetWidth/2-pz.el.offsetWidth/2-p/fs);
+		pz.initialZoomFactor = 0.8;
+		pz.zoomFactor = pz.initialZoomFactor;
+		pz.initialOffset.x = -(pz.container.offsetWidth/2-pz.el.offsetWidth/2-p/pz.initialZoomFactor);
 		pz.initialOffset.y = 0;
 	} else {
-		pz.zoomFactor = 1;
+		pz.initialZoomFactor = 1;
+		pz.zoomFactor = pz.initialZoomFactor;
 		pz.initialOffset.x = 0;
 		pz.initialOffset.y = 0;
 	}
