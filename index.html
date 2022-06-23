@@ -523,8 +523,8 @@ function restart(load){
 	var j_vector= mult([b,0,b,0,b,0,b,0,b,0,b,0],gaps);
 
 	//var text = '<svg width="'+(2*n-1)*b*gaps+'" height="'+h*(1+3*(n-1)/2)*gaps+'">';
-	var text='<svg width="'+324+'" height="'+280+'">'  //<text id="t" x="0" y="15" fill="#0000ff">1</text>';
-	text+='<style>.heavy { font: bold '+(280/(2*n-1)-2)+'px Arial; fill: white; text-anchor: middle; alignment-baseline: middle; }</style>';
+	var text='<svg width="'+(324)+'" height="'+(280)+'">'  //<text id="t" x="0" y="15" fill="#0000ff">1</text>';
+	text+='<style>.heavy { font: bold '+(280/(2*n-1)-2)+'px Arial; fill: white; text-anchor: middle; dominant-baseline: central; }</style>';
 
 	var hex00_p=addv((hex00),mult(j_vector,(n-1)/2));  //set position first hexagon	
 
@@ -536,7 +536,7 @@ function restart(load){
 			var id = [i,j].toString();
 	  		text+='<g id="g_'+id+'">'
 				+'<polygon class="hex" id="'+id+'" points="'+ points +'" style="fill:#ec991c;stroke:var(--nimiq-blue);stroke-width:'+(5/n).toString()+'"/>'
-				+'<text x="'+(hex[4]*0.3+hex[10]*0.7+2)+'" y="'+(hex[5]*0.25+hex[11]*0.75-1)+'" type="hidden" id="t_'+id+'" class="heavy"></text>'
+				+'<text x="'+(hex[4]*0.5+hex[10]*0.5)+'" y="'+(hex[3]*0.5+hex[9]*0.5)+'" type="hidden" id="t_'+id+'" class="heavy"></text>'
 				+'</g>';
 	  		// text = text+ '<polygon class="hex" clicked=0 mined=-1 id="'+[i,j].toString()+' "points="'+ points +'" style="fill:#ec991c;stroke:purple;stroke-width:1" onclick="game(['+[i,j].toString()+'])" />';
 	  		
