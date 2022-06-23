@@ -348,6 +348,10 @@ button {
 	text-align: center;
 }
 
+svg {
+	-webkit-transform: translate3d(0,0,0);
+}
+
 </style>
 </head>
 
@@ -515,8 +519,9 @@ function restart(load){
 
 	var gaps=1.0;
 
-	var fh=280;
-	var fw=324;
+	var fs=2;
+	var fh=280*fs;
+	var fw=324*fs;
 	var h=fh/((1.5*n-0.5)*gaps);   //40
 	var b=fw/((2*n-1)*gaps)   //100/((2*n-1)*gaps);   //36
 	var hex00 = [0,h/4,b/2,0,b,h/4,b,3*h/4,b/2,h,0,3*h/4];
@@ -537,7 +542,7 @@ function restart(load){
 	  		points=hex.toString();
 			var id = [i,j].toString();
 	  		text+='<g id="g_'+id+'">'
-				+'<polygon class="hex" id="'+id+'" points="'+ points +'" style="fill:#ec991c;stroke:var(--nimiq-blue);stroke-width:'+(5/n).toString()+'"/>'
+				+'<polygon class="hex" id="'+id+'" points="'+ points +'" style="fill:#ec991c;stroke:var(--nimiq-blue);stroke-width:'+(5/n*fs).toString()+'"/>'
 				+'<text x="'+(hex[4]*0.5+hex[10]*0.5)+'" y="'+(hex[3]*0.5+hex[9]*0.5)+'" type="hidden" id="t_'+id+'" class="heavy"></text>'
 				+'</g>';
 	  		// text = text+ '<polygon class="hex" clicked=0 mined=-1 id="'+[i,j].toString()+' "points="'+ points +'" style="fill:#ec991c;stroke:purple;stroke-width:1" onclick="game(['+[i,j].toString()+'])" />';
@@ -975,8 +980,10 @@ window.onload = async function() {
 	var pz = new PinchZoom(document.getElementById("outer-div"), {});
 	pz.handleDoubleTap = () => {};
 	if (window.getComputedStyle(document.getElementById("tutorial-mouse")).display == "block") {
-		pz.zoomFactor = 0.8;
-		pz.initialOffset.x = -(pz.container.offsetWidth / 2 - pz.el.offsetWidth);
+		var fs = 0.8;
+		var p = parseFloat(window.getComputedStyle(document.getElementById("demo")).getPropertyValue("padding-left"));
+		pz.zoomFactor = fs;
+		pz.initialOffset.x = -(pz.container.offsetWidth/2-pz.el.offsetWidth/2-p/fs);
 		pz.initialOffset.y = 0;
 	} else {
 		pz.zoomFactor = 1;
