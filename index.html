@@ -823,7 +823,7 @@ function game(pos, flag){
 						document.getElementById('t_'+id).innerHTML="💣";
 					}
 				}
-				document.getElementById('lost-div').style.visibility = "visible";
+				setTimeout(() => document.getElementById('lost-div').style.visibility = "visible", 125);
 				localStorage.setItem('time', document.getElementById("timer").innerHTML);
 				localStorage.setItem('complete', true);
 				stop();
@@ -868,7 +868,7 @@ function game(pos, flag){
 		}
 		// Game completed
 		if (parseInt(localStorage.getItem('to_go'))<1 && parseInt(localStorage.getItem('coins')) >= parseInt(document.getElementById('to_collect').innerHTML)){
-			document.getElementById('won-div').style.visibility='visible';
+			setTimeout(() => document.getElementById('won-div').style.visibility = "visible", 125);
 			localStorage.setItem('time', document.getElementById("timer").innerHTML);
 			localStorage.setItem('complete', true);
 			stop();
