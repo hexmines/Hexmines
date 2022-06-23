@@ -515,16 +515,18 @@ function restart(load){
 
 	var gaps=1.0;
 
-	var h=280/((1.5*n-0.5)*gaps);   //40
-	var b=324/((2*n-1)*gaps)   //100/((2*n-1)*gaps);   //36
+	var fh=280;
+	var fw=324;
+	var h=fh/((1.5*n-0.5)*gaps);   //40
+	var b=fw/((2*n-1)*gaps)   //100/((2*n-1)*gaps);   //36
 	var hex00 = [0,h/4,b/2,0,b,h/4,b,3*h/4,b/2,h,0,3*h/4];
 	var hex;
 	var i_vector= mult([-b/2,3*h/4,-b/2,3*h/4,-b/2,3*h/4,-b/2,3*h/4,-b/2,3*h/4,-b/2,3*h/4],gaps);
 	var j_vector= mult([b,0,b,0,b,0,b,0,b,0,b,0],gaps);
 
 	//var text = '<svg width="'+(2*n-1)*b*gaps+'" height="'+h*(1+3*(n-1)/2)*gaps+'">';
-	var text='<svg width="'+(324)+'" height="'+(280)+'">'  //<text id="t" x="0" y="15" fill="#0000ff">1</text>';
-	text+='<style>.heavy { font: bold '+(280/(2*n-1)-2)+'px Arial; fill: white; text-anchor: middle; dominant-baseline: central; }</style>';
+	var text='<svg width="'+(fw)+'" height="'+(fh)+'">'  //<text id="t" x="0" y="15" fill="#0000ff">1</text>';
+	text+='<style>.heavy { font: bold '+(fh/(2*n-1)*0.8)+'px Arial; fill: white; text-anchor: middle; dominant-baseline: central; }</style>';
 
 	var hex00_p=addv((hex00),mult(j_vector,(n-1)/2));  //set position first hexagon	
 
@@ -547,6 +549,10 @@ function restart(load){
 	}
 	text+='</svg>';
 	document.getElementById("demo").innerHTML = text;
+	text='<svg id="animation" width="'+(fw/(2*n-1))+'" height="'+(fh/(2*n-1))+'" style="display: none">'
+		+'<text id="atext" x="50%" y="50%" type="hidden" class="heavy"></text>'
+		+'</svg>';
+	document.getElementById("animation-container").innerHTML = text;
 	var to_go = n*(n-1)*3+1-nbombs;
 	for (var i = 0; i < 2*n-1 ; i++) {
 		for (var j = Math.max(0,i-(n-1));j < Math.min(n+i,2*n-1); j++) {
@@ -649,8 +655,8 @@ function placeAnimation(el){
 	var ot = matrix[5];
 	console.log(matrix);
 	var rect=el.getBoundingClientRect();
-	document.getElementById("animation").style.left=(rect.left-ol)/scale+window.scrollX/scale+6/scale;
-	document.getElementById("animation").style.top=(rect.top-ot)/scale+window.scrollY/scale+6/scale;
+	document.getElementById("animation").style.left=(rect.left-ol)/scale+window.scrollX/scale;
+	document.getElementById("animation").style.top=(rect.top-ot)/scale+window.scrollY/scale;
 }
 
 function game(pos, flag){
@@ -867,14 +873,7 @@ document.getElementsByClassName("hex").onclick = function() {game()};
 
 <div id="outer-div">
   	<div class="inner-div" id="demo"></div><br>
-	<svg id="animation" width="20" height="20" style="display: none">
-		<style>
-			.cursor {
-				text-anchor: middle;
-			}
-		</style>
-		<text id="atext" x="50%" y="50%" type="hidden" class="heavy cursor"></text>
-	</svg>
+	<div id="animation-container"></div>
 </div>
 
 <div class="info-div">
