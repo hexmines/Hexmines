@@ -1,7 +1,9 @@
 <head>
 	<title>HEXmines</title>
+	<link rel="icon" type="image/png" href="/favicon.png">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta charset="UTF-8">
+	<script src="focus-visible.js" defer=""></script>
 <style>
 @font-face {
 	font-family: "Atari Classic";
@@ -10,7 +12,17 @@
 		 url("font.woff2") format("woff2"),
 		 url("font.woff") format("woff"),
 		 url("font.ttf") format("truetype"),
-		 url('webfont.svg#Atari Classic') format('svg');
+		 url('font.svg#Atari Classic') format('svg');
+}
+
+@font-face {
+	font-family: "A7-Segment";
+	src: url("font2.eot");
+	src: url("font2.eot?#iefix") format("embedded-opentype"),
+		 url("font2.woff2") format("woff2"),
+		 url("font2.woff") format("woff"),
+		 url("font2.ttf") format("truetype"),
+		 url("font2.svg#A7-Segment") format("svg");
 }
 
 html {
@@ -20,6 +32,7 @@ html {
 	--nimiq-gray: #F4F4F4;
 	--nimiq-blue-bg: radial-gradient(100% 100% at bottom right, #260133, var(--nimiq-blue));
 	--nimiq-ease: cubic-bezier(0.25, 0, 0, 1);
+	--timer-glow: #ff133e;
 }
 
 body {
@@ -112,7 +125,7 @@ button {
     text-decoration: none;
     display: block;
     text-align: center;
-    font-family: inherit
+    font-family: inherit;
 }
 
 .info-div {
@@ -168,6 +181,7 @@ button {
 	width: 100%;
 	height: 100%;
 	background-color: var(--nimiq-gray);
+	visibility: hidden;
 }
 
 .tutorial-dialog {
@@ -278,6 +292,115 @@ button {
   animation: jump .5s linear alternate infinite;
 }
 
+#captcha-div {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-image: url(scene-captcha.png);
+	background-size: auto 100%;
+    background-repeat: no-repeat;
+	background-position: center;
+    /*background-position: left bottom;*/
+	background-color: var(--nimiq-gray);
+	color: var(--nimiq-blue);
+	background-attachment: fixed;
+	pointer-events: none;
+	user-select: none;
+	-moz-user-select: none;
+	-khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+	visibility: hidden;
+}
+
+#captcha-div > div {
+	display: flex;
+	flex-direction: column;
+	position: absolute;
+	margin: 0;
+	padding: 0.5em;
+	top: 50%;
+	left: 50%;
+	width: 320px;
+	height: 100%;
+	transform: translate(-50%, -50%);
+	text-align: center;
+	text-anchor: end;
+	/*background-color: rgba(255, 255, 255, .15);*/
+}
+
+#captcha-timer {
+	font-family: A7-Segment;
+	font-size: 9vh;
+	color: white;
+	/*background-color: black;*/
+	text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px var(--timer-glow), 0 0 20px var(--timer-glow), 0 0 25px var(--timer-glow), 0 0 30px var(--timer-glow), 0 0 45px var(--timer-glow);
+}
+
+#circuit-div {
+	width: 320px;
+	height: 331px;
+	flex: 1;
+}
+
+#captcha-div button{
+	display: block;
+	width: 20px;
+	min-width: 20px;
+	height: 20px;
+	border-radius: 10px;
+	border: none;
+	background-color: transparent;
+	box-sizing: border-box;
+	--min-hotspot-opacity: 0;
+	background-image: none;
+	padding: 0;
+	box-shadow: none;
+	transform: scale(200%);
+}
+
+#captcha-div button[slot="hotspot-hand"]{
+	background-color: red !important;
+}
+
+#captcha-div button[slot="hotspot-foot"]:not([data-visible]) {
+	background-color: transparent;
+	border: 3px solid blue !important;
+}
+
+#captcha-demo {
+	width: 200%;
+	height: 200%;
+	transform: translate(-25%, -25%) scale(50%, 50%);
+	pointer-events: all;
+	/*
+	visibility: hidden;
+	--progress-bar-color: transparent;
+	*/
+}
+
+.model-viewer-progress-bar {
+	display: none;
+	visibility: hidden;
+}
+
+/*
+#annotation{
+	background-color: #888888;
+	position: absolute;
+	transform: translate(10px, 10px);
+	border-radius: 10px;
+	padding: 10px;
+}
+*/
+
+/* This keeps child nodes hidden while the element loads */
+:not(:defined) > * {
+	display: none;
+}
+
 #lost-div {
 	position: absolute;
 	top: 0;
@@ -362,16 +485,22 @@ svg {
 <script>
 
 var pz;
+var captchaSequence;
+var timeoutInterval;
+var captchaTime = 30;
 
 var assetToLoad = [
 	'scene-landscape.png',
 	'scene-portrait.png',
 	'scene-lost.png',
 	'scene-won.png',
+	'scene-captcha.png',
 	'tutorial-touch.mp4',
-	'font.svg',
 	'identicons.min.svg',
-	'tutorial-mouse.mp4'
+	'tutorial-mouse.mp4',
+	'captcha.glb',
+	'model-viewer.min.js',
+	'model-viewer.min.js.map'
 ];
 var loadedAssets = 0;
 
@@ -385,7 +514,7 @@ for (var i=0; i<assetToLoad.length; i++) {
 		if(response.ok) {
 			loadedAssets ++;
 			if (loadedAssets == assetToLoad.length) {
-				document.getElementById('loading-div').style.visibility = 'hidden';
+				//document.getElementById('loading-div').style.visibility = 'hidden';
 				//console.log('loaded');
 			}
 			else {
@@ -427,6 +556,29 @@ function mult(a,k){
 		c.push(a[i0]*k);
 	}
 	return c;					
+}
+
+function showCaptcha() {
+	var min = Math.floor(captchaTime/60);
+	var sec = captchaTime % 60;
+	document.getElementById("captcha-timer").innerHTML=min.toString().padStart(2, '0') + ":" + sec.toString().padStart(2, '0');
+	timeoutInterval = setInterval(() => {
+		sec--;
+		if (sec<0){
+			min--;
+			if (min<0){
+				min = sec = 0;
+				clearInterval(timeoutInterval);
+				document.getElementById("captcha-demo").setAttribute("interaction-prompt", "none");
+				document.getElementById("lost-div").style.visibility = "visible";
+				document.getElementById("captcha-div").style.visibility = "hidden";
+			} else {
+				sec = 59;
+			}
+		}
+		document.getElementById("captcha-timer").innerHTML=min.toString().padStart(2, '0') + ":" + sec.toString().padStart(2, '0');
+	}, 1000);
+	document.getElementById('captcha-div').style.visibility = "visible";
 }
 
 function showTutorial() {
@@ -471,7 +623,11 @@ function restart(load){
 		pz.zoomFactor = pz.initialZoomFactor;
 		pz.resetOffset();
 		pz.update();
-	} 
+	}
+	captchaSequence = 0;
+	document.getElementById("check-1").style.fill = "#1b5d2f";
+	document.getElementById("check-2").style.fill = "#1b5d2f";
+	document.getElementById("check-3").style.fill = "#1b5d2f";
 	document.getElementById('won-div').style.visibility = 'hidden';
 	document.getElementById('lost-div').style.visibility = 'hidden';
 	if (load) {
@@ -504,6 +660,7 @@ function restart(load){
 			localStorage.setItem('coins', 0);
 		}
 	} else {
+		localStorage.removeItem('captcha');
 		localStorage.removeItem('complete');
 		value = null;
 		localStorage.removeItem('start');
@@ -632,10 +789,10 @@ function restart(load){
 	}
 	if (load) {
 		localStorage.setItem('to_go', to_go);
-		if (to_go<1 && parseInt(localStorage.getItem('coins')) >= parseInt(document.getElementById('to_collect').innerHTML)){
+		if (to_go<1 && parseInt(localStorage.getItem('coins')) >= parseInt(document.getElementById('to_collect').innerHTML) && localStorage.getItem('captcha') === 'true'){
 			document.getElementById('won-div').style.visibility = "visible";
 			document.getElementById("timer").innerHTML=parseInt(localStorage.getItem('time'));
-		} else if (parseInt(localStorage.getItem('lives')) == 0) {
+		} else if (parseInt(localStorage.getItem('lives')) == 0 || (localStorage.getItem('complete') === 'true' && localStorage.getItem('captcha') !== 'true')) {
 			document.getElementById('lost-div').style.visibility = "visible";
 			document.getElementById("timer").innerHTML=parseInt(localStorage.getItem('time'))
 		} else if (value) {
@@ -868,7 +1025,7 @@ function game(pos, flag){
 		}
 		// Game completed
 		if (parseInt(localStorage.getItem('to_go'))<1 && parseInt(localStorage.getItem('coins')) >= parseInt(document.getElementById('to_collect').innerHTML)){
-			setTimeout(() => document.getElementById('won-div').style.visibility = "visible", 125);
+			setTimeout(() => showCaptcha(), 125);
 			localStorage.setItem('time', document.getElementById("timer").innerHTML);
 			localStorage.setItem('complete', true);
 			stop();
@@ -877,6 +1034,26 @@ function game(pos, flag){
 	return 0;
 
 		//cell.setAttribute('mine',parseInt(cell.getAttribute('mines'))+1);
+}
+
+function testCaptcha(button) {
+	captchaSequence++;
+	if (captchaSequence == 1 && button == 6) {
+		document.getElementById("check-1").style.fill = "#22ff64";
+	} else if (captchaSequence == 2 && button == 2) {
+		document.getElementById("check-2").style.fill = "#22ff64";
+	} else if (captchaSequence == 3 && button == 9) {
+		document.getElementById("check-3").style.fill = "#22ff64";
+		clearInterval(timeoutInterval);
+		localStorage.setItem("captcha", true);
+		document.getElementById("won-div").style.visibility = "visible";
+		document.getElementById("captcha-div").style.visibility = "hidden";
+	} else {
+		clearInterval(timeoutInterval);
+		document.getElementById("captcha-demo").setAttribute("interaction-prompt", "none");
+		document.getElementById("lost-div").style.visibility = "visible";
+		document.getElementById("captcha-div").style.visibility = "hidden";
+	}
 }
 
 document.getElementsByClassName("hex").onclick = function() {game()};
@@ -937,12 +1114,6 @@ document.getElementsByClassName("hex").onclick = function() {game()};
 	</div>
 </div>
 
-<div id="loading-div">
-	<div class="progress-container">
-		<div id="progress-bar" style="width:0%; height: 100%;"></div>
-	</div>
-</div>
-
 <div id="won-div">
 	<div>
 		<p>CONGRATULATIONS, YOU WON!!</p>
@@ -957,6 +1128,78 @@ document.getElementsByClassName("hex").onclick = function() {game()};
 	</div>
 </div>
 
+<div id="captcha-div">
+	<div>
+		<div style="height: 8%"></div>
+		<span id="captcha-timer"></span>
+		<br>
+		<div id="circuit-div" style="height: 82%">
+			<model-viewer id="captcha-demo" camera-controls disable-zoom src="captcha.glb" style="--poster-color: transparent;">'
+				<div class="model-viewer-progress-bar" slot="progress-bar"></div>
+				<button slot="hotspot-0" data-position="0 0.12 0.346" data-normal="0 0 0.346" data-visibility-attribute="visible" onclick="testCaptcha(0)" style="background-color: #ff1493; border: 3px solid white;"></button>
+				<button slot="hotspot-1" data-position="0 -0.12 0.28" data-normal="0 0 0.28" data-visibility-attribute="visible" onclick="testCaptcha(1)" style="background-color: #1e90ff; border: 3px solid white;"></button>
+				<button slot="hotspot-2" data-position="0.242 0.12 0.14" data-normal="0.242 0 0.14" data-visibility-attribute="visible" onclick="testCaptcha(2)" style="background-color: #a020f0; border: 3px solid white;"></button>
+				<button slot="hotspot-3" data-position="0.3 -0.12 0.173" data-normal="0.3 0 0.173" data-visibility-attribute="visible" onclick="testCaptcha(3)" style="background-color: #00ffff; border: 3px solid white;"></button>
+				<button slot="hotspot-4" data-position="0.3 0 -0.173" data-normal="0.3 0 -0.173" data-visibility-attribute="visible" onclick="testCaptcha(4)" style="background-color: #00ff00; border: 3px solid white;"></button>
+				<button slot="hotspot-5" data-position="0 -0.12 -0.28" data-normal="0 0 -0.28" data-visibility-attribute="visible" onclick="testCaptcha(5)" style="background-color: #ffd700; border: 3px solid white;"></button>
+				<button slot="hotspot-6" data-position="-0.173 0 -0.3" data-normal="-0.173 0 -0.3" data-visibility-attribute="visible" onclick="testCaptcha(6)" style="background-color: #ff4500; border: 3px solid white;"></button>
+				<button slot="hotspot-7" data-position="-0.242 0.12 -0.14" data-normal="-0.242 0 -0.14" data-visibility-attribute="visible" onclick="testCaptcha(7)" style="background-color: #bc8f8f; border: 3px solid white;"></button>
+				<button slot="hotspot-8" data-position="-0.242 -0.12 -0.14" data-normal="-0.242 0 -0.14" data-visibility-attribute="visible" onclick="testCaptcha(8)" style="background-color: #006400; border: 3px solid white;"></button>
+				<button slot="hotspot-9" data-position="-0.3 -0.12 0.173" data-normal="-0.3 0 0.173" data-visibility-attribute="visible" onclick="testCaptcha(9)" style="background-color: #ffffff; border: 3px solid black;"></button>
+			</model-viewer>
+		</div>
+		<br>
+		<div style="height: 10%; width: 100%; display: flex; flex-direction: row; justify-content: center;">
+			<svg width="12" height="64" style="height: 100%; width: auto;"></svg>
+			<img src="captcha.gif" style="height: 100%; width: auto;">
+			<svg width="12" height="64" style="height: 100%; width: auto;"></svg>
+			<svg viewBox="0 0 80 80" width="45" height="64" style="height: 100%; width: auto;">
+				<defs>
+				  <style>
+					.cls-1 {
+					  fill: #c3c3c3;
+					}
+			  
+					.cls-1,
+					.cls-2,
+					.cls-3 {
+					  fill-rule: evenodd;
+					}
+			  
+					.cls-2 {
+					  fill: #618ac7;
+					}
+			  
+					.cls-3 {
+					  fill: #486db4;
+					}
+
+					.cls-4 {
+						fill: #22ff64;
+					}
+
+					.cls-5 {
+						fill: #1b5d2f;
+					}
+				  </style>
+				</defs>
+				<path class="cls-1" d="M53.33,30.36c0,.54.06,1.09.06,1.64a21.39,21.39,0,0,1-39,12.15l-3.71,3.76L10.61,32H26.37L22.5,35.92A10.28,10.28,0,0,0,42.28,32v0l11.09,0Z" transform="translate(7 -6)" />
+				<path class="cls-2" d="M31.94,26.37l-.15-15.76-15.91.23,3.8,3.67A21.36,21.36,0,0,0,10.61,32H21.72A10.29,10.29,0,0,1,28,22.54Z" transform="translate(7 -6)" />
+				<path class="cls-3" d="M37.67,32l15.7,0L53,16.06l-3.49,3.62A21.38,21.38,0,0,0,32,10.61h-.21l.11,11.12H32A10.27,10.27,0,0,1,41.48,28Z" transform="translate(7 -6)" />
+				<polygon id="check-1" class="cls-5" points="9.39 89.69 22.35 77.45 22.35 68.63 9.39 81.5 0 75.5 0 82.8 9.39 89.69" transform="translate(3 -1)" />
+				<polygon id="check-2" class="cls-5" points="35.37 89.69 48.33 77.45 48.33 68.63 35.37 81.5 25.98 75.5 25.98 82.8 35.37 89.69" transform="translate(4 -1)" />
+				<polygon id="check-3" class="cls-5" points="60.69 89.69 73.66 77.45 73.66 68.63 60.69 81.5 51.3 75.5 51.3 82.8 60.69 89.69" transform="translate(5 -1)" />
+			</svg>
+		</div>
+		<div style="height: 10%;"></div>
+	</div>
+</div>
+
+<div id="loading-div">
+	<div class="progress-container">
+		<div id="progress-bar" style="width:0%; height: 100%;"></div>
+	</div>
+</div>
 
 <script type="module">
 	/*
@@ -999,7 +1242,11 @@ window.onload = async function() {
 		pz.initialOffset.y = 0;
 	}
 	pz.resetOffset();
+	//document.getElementById("captcha-demo").style.visibility = "visible";
+	document.getElementById('loading-div').style.visibility = 'hidden';
+	showTutorial();
 };
 
 </script>
+<script type="module" src="model-viewer.min.js"></script>
 </body>
