@@ -569,7 +569,7 @@ function showCaptcha() {
 			if (min<0){
 				min = sec = 0;
 				clearInterval(timeoutInterval);
-				document.getElementById("captcha-demo").setAttribute("interaction-prompt", "none");
+				//document.getElementById("captcha-demo").setAttribute("interaction-prompt", "none");
 				document.getElementById("lost-div").style.visibility = "visible";
 				document.getElementById("captcha-div").style.visibility = "hidden";
 			} else {
