@@ -586,6 +586,8 @@ function showCaptcha() {
 		}
 		document.getElementById("captcha-timer").innerHTML=min.toString().padStart(2, '0') + ":" + sec.toString().padStart(2, '0');
 	}, 1000);
+	document.getElementById("captcha-demo").setAttribute("interaction-prompt", "auto");
+	document.getElementById("captcha-demo").resetInteractionPrompt();
 	document.getElementById('captcha-div').style.visibility = "visible";
 }
 
