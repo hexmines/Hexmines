@@ -1229,7 +1229,7 @@ window.onload = async function() {
 	document.getElementById("podium_1").classList.add("jump");
 	pz = new PinchZoom(document.getElementById("outer-div"), {});
 	pz.handleDoubleTap = () => {};
-	if (window.getComputedStyle(document.getElementById("tutorial-mouse")).display == "block") {
+	if (window.innerHeight < window.innerWidth) {
 		var p = parseFloat(window.getComputedStyle(document.getElementById("demo")).getPropertyValue("padding-left"));
 		pz.initialZoomFactor = 0.8;
 		pz.zoomFactor = pz.initialZoomFactor;
