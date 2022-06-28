@@ -558,17 +558,25 @@ function mult(a,k){
 	return c;					
 }
 
+function clearCaptchaTimer() {
+	if (timeoutInterval) {
+		clearInterval(timeoutInterval);
+		timeoutInterval = null;
+	}
+}
+
 function showCaptcha() {
 	var min = Math.floor(captchaTime/60);
 	var sec = captchaTime % 60;
 	document.getElementById("captcha-timer").innerHTML=min.toString().padStart(2, '0') + ":" + sec.toString().padStart(2, '0');
+	clearCaptchaTimer();
 	timeoutInterval = setInterval(() => {
 		sec--;
 		if (sec<0){
 			min--;
 			if (min<0){
 				min = sec = 0;
-				clearInterval(timeoutInterval);
+				clearCaptchaTimer();
 				//document.getElementById("captcha-demo").setAttribute("interaction-prompt", "none");
 				document.getElementById("lost-div").style.visibility = "visible";
 				document.getElementById("captcha-div").style.visibility = "hidden";
@@ -822,7 +830,7 @@ function placeAnimation(el){
 	var scale = matrix[0];
 	var ol = matrix[4];
 	var ot = matrix[5];
-	console.log(matrix);
+	//console.log(matrix);
 	var rect=el.getBoundingClientRect();
 	document.getElementById("animation").style.left=(rect.left-ol)/scale+window.scrollX/scale;
 	document.getElementById("animation").style.top=(rect.top-ot)/scale+window.scrollY/scale;
@@ -1044,12 +1052,12 @@ function testCaptcha(button) {
 		document.getElementById("check-2").style.fill = "#22ff64";
 	} else if (captchaSequence == 3 && button == 9) {
 		document.getElementById("check-3").style.fill = "#22ff64";
-		clearInterval(timeoutInterval);
+		clearCaptchaTimer();
 		localStorage.setItem("captcha", true);
 		document.getElementById("won-div").style.visibility = "visible";
 		document.getElementById("captcha-div").style.visibility = "hidden";
 	} else {
-		clearInterval(timeoutInterval);
+		clearCaptchaTimer();
 		document.getElementById("captcha-demo").setAttribute("interaction-prompt", "none");
 		document.getElementById("lost-div").style.visibility = "visible";
 		document.getElementById("captcha-div").style.visibility = "hidden";
