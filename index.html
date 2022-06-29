@@ -390,6 +390,18 @@ button {
 	visibility: hidden;
 }
 
+@media (hover: hover) {
+	.touch-prompt {
+		display: none;
+	}
+}
+
+@media (hover: none) {
+	.pointer-prompt {
+		display: none;
+	}
+}
+
 /*
 #annotation{
 	background-color: #888888;
@@ -1183,6 +1195,10 @@ document.getElementsByClassName("hex").onclick = function() {game()};
 				<button slot="hotspot-7" data-position="-0.242 0.12 -0.14" data-normal="-0.242 0 -0.14" data-visibility-attribute="visible" onclick="testCaptcha(7)" style="background-color: #bc8f8f; border: 3px solid white;"></button>
 				<button slot="hotspot-8" data-position="-0.242 -0.12 -0.14" data-normal="-0.242 0 -0.14" data-visibility-attribute="visible" onclick="testCaptcha(8)" style="background-color: #006400; border: 3px solid white;"></button>
 				<button slot="hotspot-9" data-position="-0.3 -0.12 0.173" data-normal="-0.3 0 0.173" data-visibility-attribute="visible" onclick="testCaptcha(9)" style="background-color: #ffffff; border: 3px solid black;"></button>
+				<div slot="interaction-prompt" style="margin-top: 150%;">
+					<img class="pointer-prompt" src="pointer.png">
+					<img class="touch-prompt" src="touch.png">
+				</div>
 			</model-viewer>
 		</div>
 		<br>
