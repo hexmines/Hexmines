@@ -1326,6 +1326,10 @@ window.onload = async function() {
 	//captchaSequence = 0, showCaptcha(), clearCaptchaTimer(), timeoutInterval = true;
 	document.getElementById('loading-div').style.visibility = 'hidden';
 	showTutorial();
+	// Hack prevent the model not showing up on Firefox desktop
+	if(navigator.userAgent.toLowerCase().indexOf('firefox') > -1 && window.matchMedia("(hover: hover)").matches) {
+		window.createImageBitmap = undefined;
+	}
 };
 
 </script>
