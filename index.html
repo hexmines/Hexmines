@@ -1166,14 +1166,14 @@ document.getElementsByClassName("hex").onclick = function() {game()};
 <div id="won-div">
 	<div>
 		<p>CONGRATULATIONS, YOU WON!!</p>
-		<p><button onclick="restart(false)">Restart</button></p>	
+		<p><button onclick="restart(false), showTutorial()">Restart</button></p>	
 	</div>
 </div>
 
 <div id="lost-div">
 	<div>
 		<p>Sorry, you died. Try again.</p>
-		<p><button onclick="restart(false)">Restart</button></p>	
+		<p><button onclick="restart(false), showTutorial()">Restart</button></p>	
 	</div>
 </div>
 
