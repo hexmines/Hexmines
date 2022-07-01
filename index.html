@@ -365,13 +365,8 @@ button {
 	transform: scale(75%);
 }
 
-#captcha-div button[slot="hotspot-hand"]{
-	background-color: red !important;
-}
-
-#captcha-div button[slot="hotspot-foot"]:not([data-visible]) {
-	background-color: transparent;
-	border: 3px solid blue !important;
+#captcha-div button:not([data-visible]) {
+	display: none;
 }
 
 #captcha-demo {
