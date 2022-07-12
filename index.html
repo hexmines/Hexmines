@@ -42,22 +42,33 @@ body {
     height: 100%;
     overflow-y: auto;
 	-webkit-overflow-scrolling: touch;
+	background-color: var(--nimiq-gray);
+	color: var(--nimiq-blue);
+}
+
+#game-div {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
 	background-size: 100%;
     background-repeat: no-repeat;
     background-position: center bottom;
+	background-attachment: fixed;
 	background-color: var(--nimiq-gray);
 	color: var(--nimiq-blue);
-	background-attachment: fixed;
+	visibility: hidden;
 }
 
 @media (orientation: landscape) {
-	body {
+	#game-div {
 		background-image: url(scene-landscape.png);
 	}
 }
 
 @media (orientation: portrait) {
-	body {
+	#game-div {
 		background-image: url(scene-portrait.png);
 	}
 }
@@ -155,6 +166,7 @@ button {
 	height: 100%;
 	background-color: var(--nimiq-gray);
 	color: var(--nimiq-blue);
+	visibility: hidden;
 }
 
 .progress-container {
@@ -168,10 +180,12 @@ button {
 	height: 1em;
 	accent-color: var(--nimiq-blue);
 	border: 2px solid var(--nimiq-blue);
+	border-radius: 1em;
 }
 
 #progress-bar {
-	background-color: var(--nimiq-blue);
+    background-color: var(--nimiq-blue);
+	border-radius: 1em;
 }
 
 #tutorial-div {
@@ -515,6 +529,18 @@ var assetToLoad = [
 ];
 var loadedAssets = 0;
 
+var currentPercent = 0;
+var targetPercent = 0;
+var loadingIntervalTimer = setInterval(() => {
+	currentPercent = targetPercent * 0.02 + currentPercent * 0.98;
+	//console.log(currentPercent);
+	document.getElementById('progress-bar').style.width = currentPercent + '%';
+}, 1);
+var showLoadingTimer = setTimeout(() => {
+	if (loadingIntervalTimer) {
+		document.getElementById('loading-div').style.visibility = 'visible';
+	}
+}, 500);
 for (var i=0; i<assetToLoad.length; i++) {
 	fetch(assetToLoad[i], {
 		mode: 'cors',
@@ -525,11 +551,14 @@ for (var i=0; i<assetToLoad.length; i++) {
 		if(response.ok) {
 			loadedAssets ++;
 			if (loadedAssets == assetToLoad.length) {
+				clearTimeout(showLoadingTimer);
+				clearInterval(loadingIntervalTimer);
+				loadingIntervalTimer = null;
 				//document.getElementById('loading-div').style.visibility = 'hidden';
 				//console.log('loaded');
 			}
 			else {
-				document.getElementById('progress-bar').style.width = Math.round(100*loadedAssets/assetToLoad.length) + '%';
+				targetPercent = 100*loadedAssets/assetToLoad.length;
 				//console.log((100*loadedAssets/assetToLoad.length) + '%');
 			}
 		}
@@ -622,6 +651,7 @@ function showTutorial() {
 }
 
 function hideTutorial(){
+	document.getElementById("game-div").style.visibility = "visible";
 	document.getElementById("tutorial-div").style.visibility = "hidden";
 }
 
@@ -1104,19 +1134,20 @@ document.getElementsByClassName("hex").onclick = function() {game()};
 
 </script>
 
-<div id="outer-div">
-  	<div class="inner-div" id="demo"></div><br>
-	<div id="animation-container"></div>
-</div>
+<div id="game-div">
+	<div id="outer-div">
+		<div class="inner-div" id="demo"></div><br>
+		<div id="animation-container"></div>
+	</div>
 
-<div class="info-div">
-	<span onclick="showTutorial()">ℹ️</span>
-</div>
+	<div class="info-div">
+		<span onclick="showTutorial()">ℹ️</span>
+	</div>
 
-
-<div class="hud">
-	<p><span><span id="live1">❤️</span><span id="live2">❤️</span><span id="live3">❤️</span></span> <span>💰x<span id="coins">0</span>/<span id="to_collect">5</span></span> <span>💣x<span id="nbombs"></span></span> <span>🕑<span id='timer'>0</span></span></p>
-	<p><button onclick="restart(false)">Restart</button></p>
+	<div class="hud">
+		<p><span><span id="live1">❤️</span><span id="live2">❤️</span><span id="live3">❤️</span></span> <span>💰x<span id="coins">0</span>/<span id="to_collect">5</span></span> <span>💣x<span id="nbombs"></span></span> <span>🕑<span id='timer'>0</span></span></p>
+		<p><button onclick="restart(false)">Restart</button></p>
+	</div>
 </div>
 
 <div id="tutorial-div">
@@ -1325,7 +1356,20 @@ window.onload = async function() {
 	if(navigator.userAgent.toLowerCase().indexOf('firefox') > -1 && window.matchMedia("(hover: hover)").matches) {
 		window.createImageBitmap = undefined;
 	}
+	//document.getElementById('game-div').style.backgroundImage = "url(scene-landscape.png)";
+	//document.getElementById('lost-div').style.backgroundImage = "url(scene-lost.png)";
 };
+
+document.addEventListener('selectionchange', () => {
+	var sel = window.getSelection ? window.getSelection() : document.selection;
+	if (sel) {
+		if (sel.removeAllRanges) {
+			sel.removeAllRanges();
+		} else if (sel.empty) {
+			sel.empty();
+		}
+	}
+});
 
 </script>
 <script type="module" src="model-viewer.min.js"></script>
