@@ -1,5 +1,5 @@
 <head>
-	<title>HEXmines</title>
+	<title>Hexmines</title>
 	<link rel="icon" type="image/png" href="/favicon.png">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta charset="UTF-8">
@@ -103,6 +103,26 @@ text {
 	position: absolute;
 	text-align: center;
 	pointer-events: none;
+}
+
+#prompt {
+	cursor: default;
+	position: absolute;
+	text-align: center;
+	pointer-events: none;
+	visibility: hidden;
+}
+
+@media (orientation: landscape) {
+	#prompt {
+		transform: translate(-10%, -10%) scale(0.5);
+	}
+}
+
+@media (orientation: portrait) {
+	#prompt {
+		transform: translate(-5%, -5%) scale(0.80);
+	}
 }
 
 .hud span {
@@ -605,6 +625,47 @@ function clearCaptchaTimer() {
 	}
 }
 
+function showCollectPrompt() {
+	var n=parseInt(localStorage.getItem('nside'));
+	document.getElementById("prompt").getAnimations().forEach(a=>a.cancel());
+	//var found = false;
+	for (var i1=0;i1<n*(n-1)*3;i1++){
+		var el = document.getElementsByClassName('hex')[i1];
+		var id = el.id;
+		if (parseInt(localStorage.getItem('coin'+id))==1){
+			placeElement(el, "prompt");
+			document.getElementById("prompt").animate([
+			{
+				opacity: 0,
+				visibility: "visible",
+			}, {
+				opacity: 0,
+				offset: 0.75,
+			}, {
+				opacity: 1,
+			}], {
+				duration: 4000,
+				direction: 'alternate',
+				easing: 'linear',
+				iterations: Infinity,
+			});
+			//document.getElementById("prompt").style.visibility = "visible";
+			//found = true;
+			break;
+		}
+	}
+	/*
+	if (!found) {
+		document.getElementById("prompt").style.visibility = "hidden";
+	}
+	*/
+}
+
+function hideCollectPrompt() {
+	document.getElementById("prompt").getAnimations().forEach(a=>a.cancel());
+	document.getElementById("prompt").style.visibility = "hidden";
+}
+
 function showCaptcha() {
 	var min = Math.floor(captchaTime/60);
 	var sec = captchaTime % 60;
@@ -651,6 +712,13 @@ function showTutorial() {
 }
 
 function hideTutorial(){
+	// Still coins remaining
+	//console.log([parseInt(localStorage.getItem('to_go'))<1, parseInt(localStorage.getItem('coins')) < parseInt(document.getElementById('to_collect').innerHTML)]);
+	if (parseInt(localStorage.getItem('to_go'))<1 && parseInt(localStorage.getItem('coins')) < parseInt(document.getElementById('to_collect').innerHTML)){
+		showCollectPrompt();
+	} else {
+		hideCollectPrompt();
+	}
 	document.getElementById("game-div").style.visibility = "visible";
 	document.getElementById("tutorial-div").style.visibility = "hidden";
 }
@@ -674,6 +742,10 @@ var stop = function() {
 }
 
 function restart(load){
+	var n = 6; // number of cells per side
+	var nbombs = 10; // number er of mines
+	var ncoins = 5; // number of coins to collect
+
 	load = (load && localStorage.getItem('load')==='true') || false;
 	stop();
 	if (pz) {
@@ -732,9 +804,6 @@ function restart(load){
 		document.getElementById('coins').innerHTML = 0;
 		localStorage.setItem('coins', 0);
 	}
-	var n = 6; // number of cells per side
-	var nbombs = 10; // number er of mines
-	var ncoins = 5; // number of coins to collect
 	document.getElementById('to_collect').innerHTML=ncoins;
 	localStorage.setItem('nside', n);
 	localStorage.setItem('nbombs', nbombs);
@@ -778,8 +847,9 @@ function restart(load){
 	}
 	text+='</svg>';
 	document.getElementById("demo").innerHTML = text;
-	text='<svg id="animation" width="'+(fw/(2*n-1))+'" height="'+(fh/(2*n-1))+'" style="display: none">'
+	text='<svg id="animation" width="'+(fw/(2*n-1))+'" height="'+(fh/(2*n-1))+'" style="display: none;">'
 		+'<text id="atext" x="50%" y="50%" type="hidden" class="heavy"></text>'
+		//+'<image x="0%" y="0%" width="100%" height="100%" xlink:href="touch.png"/>'
 		+'</svg>';
 	document.getElementById("animation-container").innerHTML = text;
 	var to_go = n*(n-1)*3+1-nbombs;
@@ -858,6 +928,8 @@ function restart(load){
 		} else if (value) {
 			start();
 		}
+	} else {
+		localStorage.setItem('to_go', n*(n-1)*3+1-nbombs);
 	}
 	document.getElementById("captcha-demo").setAttribute("camera-orbit", "0deg 75deg 105%");
 	localStorage.setItem('load', true);
@@ -876,7 +948,7 @@ function valid(pos,n){
 	return false;
 }
 
-function placeAnimation(el){
+function placeElement(el, id){
 	var style = window.getComputedStyle(document.getElementById("outer-div"));
 	var matrix = style.transform || style.webkitTransform || style.mozTransform;
 	matrix=matrix=="none"||typeof matrix=="undefined"?[1,0,0,1,0,0]:matrix.match(/matrix.*\((.+)\)/)[1].split(',').map(n=>parseFloat(n));
@@ -885,8 +957,8 @@ function placeAnimation(el){
 	var ot = matrix[5];
 	//console.log(matrix);
 	var rect=el.getBoundingClientRect();
-	document.getElementById("animation").style.left=(rect.left-ol)/scale+window.scrollX/scale;
-	document.getElementById("animation").style.top=(rect.top-ot)/scale+window.scrollY/scale;
+	document.getElementById(id).style.left=(rect.left-ol)/scale+window.scrollX/scale;
+	document.getElementById(id).style.top=(rect.top-ot)/scale+window.scrollY/scale;
 }
 
 function game(pos, flag){
@@ -898,7 +970,7 @@ function game(pos, flag){
 		//console.log(pos);
 		var target = event?event.target:document.getElementById('g_'+pos.toString());
 		let cell = document.getElementById(pos.toString());
-		// Set up bombs
+		// Set up bombs and coins
 		if (parseInt(localStorage.getItem('mined'+pos))==-1){
 			var start_config=[];
 			var nbombs=parseInt(localStorage.getItem('nbombs'));
@@ -941,7 +1013,7 @@ function game(pos, flag){
 				}
 			}
 			//console.log(loot);
-			Shuffle(loot);
+			loot=Shuffle(loot);
 			for (var i3=0;i3<parseInt(document.getElementById('to_collect').innerHTML); i3++){
 				localStorage.setItem('coin'+loot[i3].toString(), 1);
 			}
@@ -950,7 +1022,7 @@ function game(pos, flag){
 		// Flag/unflag cell
 		if (flag == true && parseInt(localStorage.getItem('clicked'+pos))==0){
 			document.getElementById("atext").innerHTML="🚩";
-			placeAnimation(target);
+			placeElement(target, "animation");
 			if (parseInt(localStorage.getItem('flagged'+pos))==0) {
 				localStorage.setItem('flagged'+pos, 1);
 				document.getElementById("animation").style.display='block';
@@ -998,7 +1070,7 @@ function game(pos, flag){
 			document.getElementById('t_'+pos).innerHTML="";
 			localStorage.setItem('text'+pos, "");
 			document.getElementById("animation").getAnimations().forEach(a=>a.cancel());
-			placeAnimation(target);
+			placeElement(target, "animation");
 			document.getElementById("animation").animate([
 			{
 				opacity: 1,
@@ -1014,6 +1086,9 @@ function game(pos, flag){
 				duration: 400,
 				easing: 'linear',
 			}).onfinish=()=>document.getElementById("animation").style.display='none';
+			if (parseInt(localStorage.getItem('to_go'))<1 && parseInt(localStorage.getItem('coins')) < parseInt(document.getElementById('to_collect').innerHTML)){
+				showCollectPrompt();
+			}
 		}
 		// There is a bomb
 		if (parseInt(localStorage.getItem('mined'+pos))==1 && parseInt(localStorage.getItem('clicked'+pos))==0){
@@ -1065,6 +1140,10 @@ function game(pos, flag){
 			if (surr!=0){
 				document.getElementById('t_'+pos.toString()).innerHTML=surr;
 				localStorage.setItem('text'+pos, surr);
+				// Still coins remaining
+				if (parseInt(localStorage.getItem('to_go'))<1 && parseInt(localStorage.getItem('coins')) < parseInt(document.getElementById('to_collect').innerHTML)){
+					showCollectPrompt();
+				}
 			}
 			if (surr==0){
 				if (parseInt(localStorage.getItem('coin'+pos))==1) {
@@ -1138,6 +1217,10 @@ document.getElementsByClassName("hex").onclick = function() {game()};
 	<div id="outer-div">
 		<div class="inner-div" id="demo"></div><br>
 		<div id="animation-container"></div>
+		<div id="prompt">
+			<img class="pointer-prompt" src="pointer.png">
+			<img class="touch-prompt" src="touch.png">
+		</div>
 	</div>
 
 	<div class="info-div">
@@ -1211,16 +1294,16 @@ document.getElementsByClassName("hex").onclick = function() {game()};
 		<div id="circuit-div" style="height: 82%">
 			<model-viewer id="captcha-demo" camera-controls disable-zoom src="captcha.glb" style="--poster-color: transparent;">'
 				<div class="model-viewer-progress-bar" slot="progress-bar"></div>
-				<button slot="hotspot-0" data-position="0 0.12 0.346" data-normal="0 0 0.346" data-visibility-attribute="visible" onclick="testCaptcha(0)" style="background-color: #ff1493; border: 3px solid white;"></button>
-				<button slot="hotspot-1" data-position="0 -0.12 0.28" data-normal="0 0 0.28" data-visibility-attribute="visible" onclick="testCaptcha(1)" style="background-color: #1e90ff; border: 3px solid white;"></button>
-				<button slot="hotspot-2" data-position="0.242 0.12 0.14" data-normal="0.242 0 0.14" data-visibility-attribute="visible" onclick="testCaptcha(2)" style="background-color: #a020f0; border: 3px solid white;"></button>
-				<button slot="hotspot-3" data-position="0.3 -0.12 0.173" data-normal="0.3 0 0.173" data-visibility-attribute="visible" onclick="testCaptcha(3)" style="background-color: #00ffff; border: 3px solid white;"></button>
-				<button slot="hotspot-4" data-position="0.3 0 -0.173" data-normal="0.3 0 -0.173" data-visibility-attribute="visible" onclick="testCaptcha(4)" style="background-color: #00ff00; border: 3px solid white;"></button>
-				<button slot="hotspot-5" data-position="0 -0.12 -0.28" data-normal="0 0 -0.28" data-visibility-attribute="visible" onclick="testCaptcha(5)" style="background-color: #ffd700; border: 3px solid white;"></button>
-				<button slot="hotspot-6" data-position="-0.173 0 -0.3" data-normal="-0.173 0 -0.3" data-visibility-attribute="visible" onclick="testCaptcha(6)" style="background-color: #ff4500; border: 3px solid white;"></button>
-				<button slot="hotspot-7" data-position="-0.242 0.12 -0.14" data-normal="-0.242 0 -0.14" data-visibility-attribute="visible" onclick="testCaptcha(7)" style="background-color: #bc8f8f; border: 3px solid white;"></button>
-				<button slot="hotspot-8" data-position="-0.242 -0.12 -0.14" data-normal="-0.242 0 -0.14" data-visibility-attribute="visible" onclick="testCaptcha(8)" style="background-color: #006400; border: 3px solid white;"></button>
-				<button slot="hotspot-9" data-position="-0.3 -0.12 0.173" data-normal="-0.3 0 0.173" data-visibility-attribute="visible" onclick="testCaptcha(9)" style="background-color: #ffffff; border: 3px solid black;"></button>
+				<button slot="hotspot-0" data-position="0 0.12 0.346" data-normal="0 0 0.346" data-visibility-attribute="visible" onmousedown="testCaptcha(0)" style="background-color: #ff1493; border: 3px solid white;"></button>
+				<button slot="hotspot-1" data-position="0 -0.12 0.28" data-normal="0 0 0.28" data-visibility-attribute="visible" onmousedown="testCaptcha(1)" style="background-color: #1e90ff; border: 3px solid white;"></button>
+				<button slot="hotspot-2" data-position="0.242 0.12 0.14" data-normal="0.242 0 0.14" data-visibility-attribute="visible" onmousedown="testCaptcha(2)" style="background-color: #a020f0; border: 3px solid white;"></button>
+				<button slot="hotspot-3" data-position="0.3 -0.12 0.173" data-normal="0.3 0 0.173" data-visibility-attribute="visible" onmousedown="testCaptcha(3)" style="background-color: #00ffff; border: 3px solid white;"></button>
+				<button slot="hotspot-4" data-position="0.3 0 -0.173" data-normal="0.3 0 -0.173" data-visibility-attribute="visible" onmousedown="testCaptcha(4)" style="background-color: #00ff00; border: 3px solid white;"></button>
+				<button slot="hotspot-5" data-position="0 -0.12 -0.28" data-normal="0 0 -0.28" data-visibility-attribute="visible" onmousedown="testCaptcha(5)" style="background-color: #ffd700; border: 3px solid white;"></button>
+				<button slot="hotspot-6" data-position="-0.173 0 -0.3" data-normal="-0.173 0 -0.3" data-visibility-attribute="visible" onmousedown="testCaptcha(6)" style="background-color: #ff4500; border: 3px solid white;"></button>
+				<button slot="hotspot-7" data-position="-0.242 0.12 -0.14" data-normal="-0.242 0 -0.14" data-visibility-attribute="visible" onmousedown="testCaptcha(7)" style="background-color: #bc8f8f; border: 3px solid white;"></button>
+				<button slot="hotspot-8" data-position="-0.242 -0.12 -0.14" data-normal="-0.242 0 -0.14" data-visibility-attribute="visible" onmousedown="testCaptcha(8)" style="background-color: #006400; border: 3px solid white;"></button>
+				<button slot="hotspot-9" data-position="-0.3 -0.12 0.173" data-normal="-0.3 0 0.173" data-visibility-attribute="visible" onmousedown="testCaptcha(9)" style="background-color: #ffffff; border: 3px solid black;"></button>
 				<div slot="interaction-prompt" style="margin-top: 150%;">
 					<img class="pointer-prompt" src="pointer.png">
 					<img class="touch-prompt" src="touch.png">
